@@ -23,6 +23,9 @@ public class CTFClass {
 
     public void giveClassTo(Player player) {
         player.getInventory().clear();
+        player.setExp(0);
+        player.setLevel(0);
+        player.setFoodLevel(20);
         PlayerInventory inv = player.getInventory();
         for (ItemStack i : hotbar) {
             inv.addItem(i);

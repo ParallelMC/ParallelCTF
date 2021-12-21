@@ -30,4 +30,10 @@ commands:
   pyro:
     description: Equips the Pyro class
     usage: /pyro
+  assassin:
+    description: Equips the Assassin class
+    usage: /assassin
+  dwarf:
+    description: Equips the Dwarf class
+    usage: /dwarf
 

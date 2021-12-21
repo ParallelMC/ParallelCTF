@@ -1,14 +1,16 @@
 package parallelmc.ctf.events;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.util.Vector;
+import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import parallelmc.ctf.CTFPlayer;
 import parallelmc.ctf.ParallelCTF;
+import parallelmc.ctf.classes.AssassinClass;
 import parallelmc.ctf.classes.MedicClass;
 import parallelmc.ctf.classes.PyroClass;
 
@@ -40,6 +42,19 @@ public class OnDamageEntity implements Listener {
                         if (victim.getFireTicks() > 0) {
                             victim.setHealth(0);
                         }
+                    }
+                }
+                if (pla.getCtfClass() instanceof AssassinClass assassin) {
+                    if (assassin.isAssassinating()) {
+                        attacker.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
+                        ParallelCTF.sendMessageTo(attacker, "Assassination kill! Strength II for 9 seconds.");
+                        attacker.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 180, 1, true));
+                    }
+                }
+                if (plv.getCtfClass() instanceof AssassinClass assassin) {
+                    if (assassin.isAssassinating()) {
+                        // assassins can be instakilled while assassinating
+                        victim.setHealth(0);
                     }
                 }
             }

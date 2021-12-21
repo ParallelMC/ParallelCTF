@@ -1,6 +1,7 @@
 package parallelmc.ctf;
 
-import org.bukkit.GameRule;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -27,11 +28,15 @@ public class GameManager {
     public void addPlayer(Player player) {
         if (redPlayers > bluePlayers) {
             players.put(player, new CTFPlayer(player, CTFTeam.BLUE));
+            player.customName(Component.text(player.getName(), NamedTextColor.BLUE));
+            player.playerListName(Component.text(player.getName(), NamedTextColor.BLUE));
             ParallelCTF.sendMessageTo(player, "Joined §9Blue team!");
             bluePlayers++;
         }
         else { // secretly favor red to make things easier
             players.put(player, new CTFPlayer(player, CTFTeam.RED));
+            player.customName(Component.text(player.getName(), NamedTextColor.RED));
+            player.playerListName(Component.text(player.getName(), NamedTextColor.RED));
             ParallelCTF.sendMessageTo(player, "Joined §cRed team!");
             redPlayers++;
         }

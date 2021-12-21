@@ -15,6 +15,7 @@ import parallelmc.ctf.ArrowShot;
 import parallelmc.ctf.CTFPlayer;
 import parallelmc.ctf.ParallelCTF;
 import parallelmc.ctf.classes.ArcherClass;
+import parallelmc.ctf.classes.DwarfClass;
 import parallelmc.ctf.classes.MedicClass;
 import parallelmc.ctf.classes.PyroClass;
 
@@ -71,6 +72,10 @@ public class OnProjectileHit implements Listener {
                             for (Entity e : nearby) {
                                 if (e instanceof Player explosionHit) {
                                     CTFPlayer eh = ParallelCTF.gameManager.getPlayer(explosionHit);
+                                    if (eh.getCtfClass() instanceof DwarfClass dwarf) {
+                                        // level 10 dwarves are immune
+                                        if (dwarf.getLevel() == 10) return;
+                                    }
                                     // medics cannot be set on fire
                                     if (eh.getTeam() != pl.getTeam() && !(eh.getCtfClass() instanceof MedicClass)) {
                                         explosionHit.setFireTicks(70);

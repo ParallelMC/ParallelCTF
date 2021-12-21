@@ -60,35 +60,6 @@ public class NinjaClass extends CTFClass {
         this.effects = new PotionEffect[] {
                 new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1, true)
         };
-        this.runnable = new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (isInvisible) {
-                    ItemStack redstone = player.getInventory().getItemInMainHand();
-                    // sneaking = 2 redstone per second
-                    if (player.isSneaking()) {
-                        redstone.subtract();
-                    }
-                    // sprinting = 12 redstone per second
-                    else if (player.isSprinting()) {
-                        redstone.subtract(6);
-                    }
-                    // walking = 4 redstone per second
-                    else {
-                        redstone.subtract(2);
-                    }
-                }
-                else if (player.isSneaking()) {
-                    if (player.getInventory().getItemInMainHand().getType() == Material.GOLDEN_SWORD) {
-                        double health = player.getHealth();
-                        // heals a half a heart every second
-                        if (health < 20D) {
-                            player.setHealth(health + 0.25D);
-                        }
-                    }
-                }
-            }
-        };
         initRunnable();
         this.runnableTicks = 10L;
     }

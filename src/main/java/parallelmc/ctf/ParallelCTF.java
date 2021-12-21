@@ -2,11 +2,9 @@ package parallelmc.ctf;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.checkerframework.checker.units.qual.Force;
 import parallelmc.ctf.classes.*;
 import parallelmc.ctf.commands.*;
 import parallelmc.ctf.events.*;
@@ -27,6 +25,8 @@ public class ParallelCTF extends JavaPlugin {
         classes.put("Archer", new ArcherClass());
         classes.put("Ninja", new NinjaClass());
         classes.put("Pyro", new PyroClass());
+        classes.put("Assassin", new AssassinClass());
+        classes.put("Dwarf", new DwarfClass());
         // separate register function for items
         for (CTFClass c : classes.values()) {
             c.registerKit();
@@ -48,6 +48,7 @@ public class ParallelCTF extends JavaPlugin {
         manager.registerEvents(new OnTeleport(), this);
         manager.registerEvents(new OnCreatureSpawn(), this);
         manager.registerEvents(new OnProjectileThrown(), this);
+        manager.registerEvents(new OnChangeHeldItem(), this);
         // manager.registerEvents(new OnDeath(), this);
         this.getCommand("team").setExecutor(new ChangeTeam());
         this.getCommand("forceteam").setExecutor(new ForceTeam());
@@ -57,8 +58,8 @@ public class ParallelCTF extends JavaPlugin {
         this.getCommand("archer").setExecutor(new Archer());
         this.getCommand("ninja").setExecutor(new Ninja());
         this.getCommand("pyro").setExecutor(new Pyro());
-
-
+        this.getCommand("assassin").setExecutor(new Assassin());
+        this.getCommand("dwarf").setExecutor(new Dwarf());
         gameManager = new GameManager(this);
         gameManager.startGameLoop();
     }
