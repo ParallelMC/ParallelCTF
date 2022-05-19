@@ -2,6 +2,8 @@ package parallelmc.ctf;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,6 +18,7 @@ public class ParallelCTF extends JavaPlugin {
     public static Level LOG_LEVEL = Level.INFO;
     public static final HashMap<String, CTFClass> classes = new HashMap<>();
     public static GameManager gameManager;
+    private FileConfiguration config;
 
     @Override
     public void onLoad() {
@@ -50,6 +53,8 @@ public class ParallelCTF extends JavaPlugin {
         manager.registerEvents(new OnProjectileThrown(), this);
         manager.registerEvents(new OnChangeHeldItem(), this);
         // manager.registerEvents(new OnDeath(), this);
+        this.getCommand("startgame").setExecutor(new StartGame());
+        this.getCommand("debug").setExecutor(new Debug());
         this.getCommand("team").setExecutor(new ChangeTeam());
         this.getCommand("forceteam").setExecutor(new ForceTeam());
         this.getCommand("tank").setExecutor(new Tank());
@@ -60,8 +65,13 @@ public class ParallelCTF extends JavaPlugin {
         this.getCommand("pyro").setExecutor(new Pyro());
         this.getCommand("assassin").setExecutor(new Assassin());
         this.getCommand("dwarf").setExecutor(new Dwarf());
-        gameManager = new GameManager(this);
-        gameManager.startGameLoop();
+
+        // load config
+        config = this.getConfig();
+        gameManager = new GameManager(this,
+                new Location(this.getServer().getWorld("world-ctf"), config.getDouble("pregame.x"), config.getDouble("pregame.y"), config.getDouble("pregame.z")),
+                config.getInt("win_captures"));
+        gameManager.loapMap();
     }
 
     @Override
@@ -80,6 +90,12 @@ public class ParallelCTF extends JavaPlugin {
     public static void sendMessageTo(Player player, String message) {
         Component msg = Component.text("§3[§f§lCTF§3] §a" + message);
         player.sendMessage(msg);
+    }
+
+    public static void sendMessage(String message) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            sendMessageTo(p, message);
+        }
     }
 
 

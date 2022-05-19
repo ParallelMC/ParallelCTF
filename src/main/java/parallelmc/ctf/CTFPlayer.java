@@ -1,8 +1,10 @@
 package parallelmc.ctf;
 
 import fr.mrmicky.fastboard.FastBoard;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
@@ -50,17 +52,19 @@ public class CTFPlayer {
         ctfClass.giveClassTo(player);
     }
 
-    public void updateBoard(int mins, int secs, int redCaps, int blueCaps) {
+    public void updateBoard(int mins, int secs, int capsToWin, int redCaps, int blueCaps) {
         this.board.updateLines(
                 "",
                 "Time Left   | " + mins + ":" + (secs < 10 ? "0" + secs : secs),
                 "Your Team | " + (team == CTFTeam.RED ? "§cRed" : "§9Blue"),
                 "",
                 "§c§lRed",
-                "§cCaptures | " + redCaps,
+                "§cCaptures | " + redCaps + "/" + capsToWin,
+                "§cFlag Status | " + (ParallelCTF.gameManager.isRedFlagTaken() ? "Held by " + ParallelCTF.gameManager.getRedFlagCarrier().getMcPlayer().getName() : "Home"),
                 "",
                 "§9§lBlue",
-                "§9Captures | " + blueCaps
+                "§9Captures | " + blueCaps + "/" + capsToWin,
+                "§9Flag Status | " + (ParallelCTF.gameManager.isBlueFlagTaken() ? "Held by " + ParallelCTF.gameManager.getBlueFlagCarrier().getMcPlayer().getName() : "Home")
         );
     }
 
@@ -81,9 +85,32 @@ public class CTFPlayer {
         this.board.delete();
     }
 
+    /*
+        https://i.kym-cdn.com/photos/images/original/001/688/902/e4b.jpg
+
+        Prevents players from actually being killed, and spawns a villager in their place to represent death
+    */
+    public void kill() {
+        Villager villager = (Villager)player.getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
+        villager.damage(20D);
+        player.getWorld().playSound(net.kyori.adventure.sound.Sound.sound(Key.key("entity.villager.death"), Sound.Source.MASTER, 1, 1), Sound.Emitter.self());
+        if (this.team == CTFTeam.BLUE) {
+            player.teleport(ParallelCTF.gameManager.ctfMap.blueSpawnPos);
+        }
+        else {
+            player.teleport(ParallelCTF.gameManager.ctfMap.redSpawnPos);
+        }
+        player.setFireTicks(0);
+        player.setFallDistance(0);
+        player.setHealth(20D);
+        ctfClass.giveClassTo(player);
+        healingCooldown = false;
+    }
+
     public Player getMcPlayer() { return this.player; }
 
     public CTFTeam getTeam() { return this.team; }
 
     public CTFClass getCtfClass() { return this.ctfClass; }
+
 }

@@ -5,6 +5,14 @@ api-version: 1.18
 author: EBro912
 description: A Capture the Flag plugin for Parallel events
 commands:
+  debug:
+    description: Shows debug info
+    usage: /debug
+    default: op
+  startgame:
+    description: Starts the game
+    usage: /startgame
+    default: op
   team:
     description: Change your team
     usage: /team <red/blue>

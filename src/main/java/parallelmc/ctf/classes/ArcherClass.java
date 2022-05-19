@@ -2,17 +2,12 @@ package parallelmc.ctf.classes;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import parallelmc.ctf.ArrowShot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 
 public class ArcherClass extends CTFClass {
@@ -21,6 +16,7 @@ public class ArcherClass extends CTFClass {
     }
     public void registerKit() {
         this.armor = new ItemStack[] {
+
                 new ItemStack(Material.CHAINMAIL_BOOTS),
                 new ItemStack(Material.CHAINMAIL_LEGGINGS),
                 new ItemStack(Material.CHAINMAIL_CHESTPLATE),

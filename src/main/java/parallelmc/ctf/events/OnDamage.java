@@ -19,6 +19,10 @@ public class OnDamage implements Listener {
                     event.setCancelled(true);
                 }
             }
+            if (player.getHealth() - event.getDamage() <= 0D) {
+                event.setCancelled(true);
+                pl.kill();
+            }
         }
     }
 }
