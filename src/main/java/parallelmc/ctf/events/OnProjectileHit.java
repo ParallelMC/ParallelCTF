@@ -14,10 +14,7 @@ import org.bukkit.potion.PotionEffectType;
 import parallelmc.ctf.ArrowShot;
 import parallelmc.ctf.CTFPlayer;
 import parallelmc.ctf.ParallelCTF;
-import parallelmc.ctf.classes.ArcherClass;
-import parallelmc.ctf.classes.DwarfClass;
-import parallelmc.ctf.classes.MedicClass;
-import parallelmc.ctf.classes.PyroClass;
+import parallelmc.ctf.classes.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,6 +52,13 @@ public class OnProjectileHit implements Listener {
                 effects.add(new PotionEffect(PotionEffectType.BLINDNESS, 60, 0, true));
                 effects.add(new PotionEffect(PotionEffectType.SLOW, 60, 0, true));
                 hitPlayer.addPotionEffects(effects);
+            }
+            else if (projectile instanceof EnderPearl) {
+                // cast-o-rama
+                CTFPlayer pl = ParallelCTF.gameManager.getPlayer((Player)((EnderPearl)projectile).getShooter());
+                if (pl != null && pl.getCtfClass() instanceof NinjaClass ninja) {
+                    ninja.thrownPearls.remove(projectile);
+                }
             }
         }
         if (hitBlock != null) {
@@ -95,6 +99,13 @@ public class OnProjectileHit implements Listener {
                 // still play if it hits a block just for the effect
                 hitBlock.getWorld().playSound(hitBlock.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1f, 1f);
                 hitBlock.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, hitBlock.getLocation(), 5);
+            }
+            else if (projectile instanceof EnderPearl) {
+                // cast-o-rama
+                CTFPlayer pl = ParallelCTF.gameManager.getPlayer((Player)((EnderPearl)projectile).getShooter());
+                if (pl != null && pl.getCtfClass() instanceof NinjaClass ninja) {
+                    ninja.thrownPearls.remove(projectile);
+                }
             }
         }
     }

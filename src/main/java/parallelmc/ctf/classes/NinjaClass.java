@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 
 
 public class NinjaClass extends CTFClass {
+    public ArrayList<Projectile> thrownPearls = new ArrayList<>();
+
     public NinjaClass(Player player) {
         super(player);
         this.name = "Ninja";

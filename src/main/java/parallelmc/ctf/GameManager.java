@@ -119,7 +119,7 @@ public class GameManager {
      * Loads a map from a file config
      * Will allow hot loading of different maps between rounds in the future
      */
-    public void loapMap() {
+    public void loadMap() {
         FileConfiguration config = new YamlConfiguration();
         try {
             config.load(new File(plugin.getDataFolder(), "map.yml"));
@@ -178,7 +178,7 @@ public class GameManager {
             p.getInventory().clear();
             p.getActivePotionEffects().clear();
             p.setHealth(20D);
-            p.setFoodLevel(20);
+            p.setFoodLevel(21);
             p.setExp(0F);
             p.setLevel(0);
             p.teleport(preGameLoc);
@@ -227,7 +227,7 @@ public class GameManager {
                 }
                 // dwarfs intentionally cannot sprint, so dont update their food bar
                 if (!(c.getCtfClass() instanceof DwarfClass)) {
-                    p.setFoodLevel(20);
+                    p.setFoodLevel(21);
                 }
             });
         }, 0L, 1L);

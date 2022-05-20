@@ -1,6 +1,7 @@
 package parallelmc.ctf.events;
 
 import org.bukkit.entity.Egg;
+import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,6 +28,12 @@ public class OnProjectileThrown implements Listener {
                     else {
                         ninja.setEggCooldown();
                     }
+                }
+            }
+            if (event.getEntity() instanceof EnderPearl) {
+                CTFPlayer pl = ParallelCTF.gameManager.getPlayer(player);
+                if (pl.getCtfClass() instanceof NinjaClass ninja) {
+                    ninja.thrownPearls.add(event.getEntity());
                 }
             }
         }

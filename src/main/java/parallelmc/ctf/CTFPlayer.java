@@ -8,6 +8,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 import parallelmc.ctf.classes.CTFClass;
+import parallelmc.ctf.classes.NinjaClass;
 
 import java.util.logging.Level;
 
@@ -119,6 +120,11 @@ public class CTFPlayer {
         player.setHealth(20D);
         ctfClass.giveClass();
         healingCooldown = false;
+        // remove all thrown ender pearls when a ninja dies
+        // prevents them from teleporting out of spawn after dying
+        if (this.ctfClass instanceof NinjaClass ninja) {
+            ninja.thrownPearls.forEach(Entity::remove);
+        }
         if (ParallelCTF.gameManager.getBlueFlagCarrier() == this) {
             ParallelCTF.gameManager.ctfMap.resetBlueFlag();
             ParallelCTF.sendMessage("§9Blue's Flag §ahas been reset!");

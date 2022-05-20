@@ -1,6 +1,8 @@
 package parallelmc.ctf;
 
+import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -18,6 +20,7 @@ public class ParallelCTF extends JavaPlugin {
     public static Level LOG_LEVEL = Level.INFO;
     public static final HashMap<String, Class<? extends CTFClass>> classes = new HashMap<>();
     public static GameManager gameManager;
+    public static final BossBar alphaBossBar = BossBar.bossBar(Component.text("ParallelCTF v1.0 Alpha Gameplay", NamedTextColor.YELLOW), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
 
     @Override
     public void onLoad() {
@@ -68,7 +71,7 @@ public class ParallelCTF extends JavaPlugin {
         gameManager = new GameManager(this,
                 new Location(this.getServer().getWorld("world-ctf"), config.getDouble("pregame.x"), config.getDouble("pregame.y"), config.getDouble("pregame.z")),
                 config.getInt("win_captures"));
-        gameManager.loapMap();
+        gameManager.loadMap();
     }
 
     @Override
