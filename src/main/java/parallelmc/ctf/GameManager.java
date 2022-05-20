@@ -178,7 +178,7 @@ public class GameManager {
             p.getInventory().clear();
             p.getActivePotionEffects().clear();
             p.setHealth(20D);
-            p.setFoodLevel(21);
+            p.setFoodLevel(37);
             p.setExp(0F);
             p.setLevel(0);
             p.teleport(preGameLoc);
@@ -215,7 +215,7 @@ public class GameManager {
         // tick loop
         this.plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             players.forEach((p, c) -> {
-                if (c.getCtfClass() instanceof NinjaClass ninja) {
+                if (c.getCtfClass() instanceof NinjaClass ninja && redFlagCarrier != c && blueFlagCarrier != c) {
                     if (p.getInventory().getItemInMainHand().getType() == Material.REDSTONE) {
                         if (!ninja.isInvisible()) {
                             ninja.goInvisibleTo(p, c.getTeam() == CTFTeam.RED ? CTFTeam.BLUE : CTFTeam.RED);
@@ -227,7 +227,7 @@ public class GameManager {
                 }
                 // dwarfs intentionally cannot sprint, so dont update their food bar
                 if (!(c.getCtfClass() instanceof DwarfClass)) {
-                    p.setFoodLevel(21);
+                    p.setFoodLevel(37);
                 }
             });
         }, 0L, 1L);

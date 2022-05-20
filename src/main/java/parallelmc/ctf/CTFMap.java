@@ -11,6 +11,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
+import parallelmc.ctf.classes.NinjaClass;
 
 public class CTFMap {
     public String name;
@@ -107,6 +108,8 @@ public class CTFMap {
                 if (e instanceof Player p) {
                     CTFPlayer player = ParallelCTF.gameManager.getPlayer(p);
                     if (player.getTeam() == CTFTeam.RED) {
+                        if (player.getCtfClass() instanceof NinjaClass ninja && ninja.isInvisible())
+                            continue;
                         world.getBlockAt(blueFlagPos).getRelative(BlockFace.UP).setType(Material.AIR);
                         ItemStack banner = new ItemStack(Material.BLUE_BANNER);
                         p.getInventory().setItem(EquipmentSlot.HEAD, banner);
@@ -124,6 +127,8 @@ public class CTFMap {
                 if (e instanceof Player p) {
                     CTFPlayer player = ParallelCTF.gameManager.getPlayer(p);
                     if (player.getTeam() == CTFTeam.BLUE) {
+                        if (player.getCtfClass() instanceof NinjaClass ninja && ninja.isInvisible())
+                            continue;
                         world.getBlockAt(redFlagPos).getRelative(BlockFace.UP).setType(Material.AIR);
                         ItemStack banner = new ItemStack(Material.RED_BANNER);
                         player.getMcPlayer().getInventory().setItem(EquipmentSlot.HEAD, banner);
