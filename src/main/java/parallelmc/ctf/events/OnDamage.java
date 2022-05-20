@@ -18,6 +18,7 @@ public class OnDamage implements Listener {
                 // soldiers cant take fall damage
                 if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
                     event.setCancelled(true);
+                    return;
                 }
             }
             if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK &&

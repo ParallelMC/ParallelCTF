@@ -20,9 +20,11 @@ C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\events\OnDa
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\events\OnTeleport.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\CTFTeam.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\events\OnProjectileHit.java
+C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\events\OnInventoryClick.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\fr\mrmicky\fastboard\FastReflection.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\commands\Tank.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\classes\PyroClass.java
+C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\commands\EndGame.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\classes\AssassinClass.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\classes\MedicClass.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\commands\Assassin.java
@@ -33,6 +35,7 @@ C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\classes\CTF
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\classes\NinjaClass.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\commands\Pyro.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\fr\mrmicky\fastboard\FastBoard.java
+C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\commands\Classes.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\events\OnRightClick.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\classes\ArcherClass.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\commands\Dwarf.java
