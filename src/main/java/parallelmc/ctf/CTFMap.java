@@ -66,20 +66,41 @@ public class CTFMap {
         }
     }
 
+    /***
+     * Checks if a player is in their own spawn
+     * @param p The player to check
+     * @return If the player is in their spawn
+     */
+    public boolean isPlayerInSpawn(CTFPlayer p) {
+        if (p.getTeam() == CTFTeam.BLUE) {
+            return world.getNearbyEntities(blueBB).contains(p.getMcPlayer());
+        }
+        else {
+            return world.getNearbyEntities(redBB).contains(p.getMcPlayer());
+        }
+    }
+
+    /***
+     * Resets the blue flag
+     */
     public void resetBlueFlag() {
         world.getBlockAt(blueFlagPos).getRelative(BlockFace.UP).setType(Material.BLUE_BANNER);
         ParallelCTF.gameManager.setBlueFlagTaken(false);
         ParallelCTF.gameManager.setBlueFlagCarrier(null);
-        ParallelCTF.sendMessage("§9Blue's Flag §ahas been reset!");
     }
 
+    /***
+     * Resets the red flag
+     */
     public void resetRedFlag() {
         world.getBlockAt(redFlagPos).getRelative(BlockFace.UP).setType(Material.RED_BANNER);
         ParallelCTF.gameManager.setRedFlagTaken(false);
         ParallelCTF.gameManager.setRedFlagCarrier(null);
-        ParallelCTF.sendMessage("§cRed's Flag §ahas been reset!");
     }
 
+    /***
+     * Checks a small radius at each flag to see if the flag has been stolen
+     */
     public void checkFlagTaken() {
         if (!ParallelCTF.gameManager.isBlueFlagTaken()) {
             for (Entity e : world.getNearbyEntities(blueFlagPos, 1, 2, 1)) {
@@ -100,21 +121,27 @@ public class CTFMap {
         }
         if (!ParallelCTF.gameManager.isRedFlagTaken()) {
             for (Entity e : world.getNearbyEntities(redFlagPos, 1, 2, 1)) {
-                CTFPlayer player = ParallelCTF.gameManager.getPlayer((Player)e);
-                if (player.getTeam() == CTFTeam.BLUE) {
-                    world.getBlockAt(redFlagPos).getRelative(BlockFace.UP).setType(Material.AIR);
-                    ItemStack banner = new ItemStack(Material.RED_BANNER);
-                    player.getMcPlayer().getInventory().setItem(EquipmentSlot.HEAD, banner);
-                    ParallelCTF.gameManager.setRedFlagCarrier(player);
-                    ParallelCTF.gameManager.setRedFlagTaken(true);
-                    world.spawnEntity(redFlagPos.clone().add(0, 50, 0), EntityType.LIGHTNING);
-                    ParallelCTF.sendMessage("§9" + player.getMcPlayer().getName() + " §ahas taken §cRed's Flag!");
-                    break;
+                if (e instanceof Player p) {
+                    CTFPlayer player = ParallelCTF.gameManager.getPlayer(p);
+                    if (player.getTeam() == CTFTeam.BLUE) {
+                        world.getBlockAt(redFlagPos).getRelative(BlockFace.UP).setType(Material.AIR);
+                        ItemStack banner = new ItemStack(Material.RED_BANNER);
+                        player.getMcPlayer().getInventory().setItem(EquipmentSlot.HEAD, banner);
+                        ParallelCTF.gameManager.setRedFlagCarrier(player);
+                        ParallelCTF.gameManager.setRedFlagTaken(true);
+                        world.spawnEntity(redFlagPos.clone().add(0, 50, 0), EntityType.LIGHTNING);
+                        ParallelCTF.sendMessage("§9" + player.getMcPlayer().getName() + " §ahas taken §cRed's Flag!");
+                        break;
+                    }
                 }
             }
         }
     }
 
+    /***
+     * Checks a small radius at each flag to see if either flag has been captured
+     * If both flags are taken then they both cannot be captured
+     */
     public void checkFlagCaptured() {
         if (ParallelCTF.gameManager.isRedFlagTaken() && !ParallelCTF.gameManager.isBlueFlagTaken()) {
             Player player = ParallelCTF.gameManager.getRedFlagCarrier().getMcPlayer();

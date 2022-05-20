@@ -13,6 +13,10 @@ commands:
     description: Starts the game
     usage: /startgame
     default: op
+  endgame:
+    description: Forces the game to end
+    usage: /endgame
+    default: op
   team:
     description: Change your team
     usage: /team <red/blue>
@@ -20,6 +24,9 @@ commands:
     description: Forces a player to join a team
     usage: /forceteam <player> <red/blue>
     default: op
+  classes:
+    description: Shows all CTF classes
+    usage: /classes
   tank:
     description: Equips the Tank class
     usage: /tank

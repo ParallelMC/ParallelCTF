@@ -37,9 +37,7 @@ public class OnProjectileHit implements Listener {
                         // arrow 30+ blocks away is snipe
                         double dist = shot.shotLocation().distance(hitEntity.getLocation());
                         if (dist > 30D) {
-                            // not sure if this is necessary but
-                            hitPlayer.setKiller(shot.shooter());
-                            hitPlayer.setHealth(0);
+                            ParallelCTF.gameManager.getPlayer(hitPlayer).kill();
                             ParallelCTF.sendMessageTo(hitPlayer, "You were sniped by " + shot.shooter().getName() + " from " + Math.round(dist) + " blocks away!");
                             ParallelCTF.sendMessageTo(shot.shooter(), "You sniped " + hitPlayer.getName() + " from " + Math.round(dist) + " blocks away!");
                         }
@@ -68,22 +66,22 @@ public class OnProjectileHit implements Listener {
                         hitBlock.getWorld().playSound(hitBlock.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1f, 1f);
                         hitBlock.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, hitBlock.getLocation(), 1);
                         Collection<Entity> nearby = hitBlock.getWorld().getNearbyEntities(hitBlock.getLocation(), 3, 3, 3);
-                        if (nearby.size() > 0) {
-                            for (Entity e : nearby) {
-                                if (e instanceof Player explosionHit) {
-                                    CTFPlayer eh = ParallelCTF.gameManager.getPlayer(explosionHit);
-                                    if (eh.getCtfClass() instanceof DwarfClass dwarf) {
-                                        // level 10 dwarves are immune
-                                        if (dwarf.getLevel() == 10) return;
-                                    }
-                                    // medics cannot be set on fire
-                                    if (eh.getTeam() != pl.getTeam() && !(eh.getCtfClass() instanceof MedicClass)) {
-                                        explosionHit.setFireTicks(70);
-                                    }
+                        for (Entity e : nearby) {
+                            if (e instanceof Player explosionHit) {
+                                CTFPlayer eh = ParallelCTF.gameManager.getPlayer(explosionHit);
+                                if (eh.getCtfClass() instanceof DwarfClass dwarf) {
+                                    // level 10 dwarves are immune
+                                    if (dwarf.getLevel() == 10) return;
+                                }
+                                // medics cannot be set on fire
+                                if (eh.getTeam() != pl.getTeam() && !(eh.getCtfClass() instanceof MedicClass)) {
+                                    explosionHit.setFireTicks(70);
                                 }
                             }
                         }
+                        projectile.remove();
                     }
+                    ParallelCTF.gameManager.removeShot(projectile);
                 }
             }
             else if (projectile instanceof Snowball) {

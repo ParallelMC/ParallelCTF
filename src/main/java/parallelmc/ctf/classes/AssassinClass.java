@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -14,13 +15,9 @@ import java.util.ArrayList;
 
 public class AssassinClass extends CTFClass {
     // TODO: give assassin redstone when they get a non assassination kill
-    public AssassinClass() {
-        super("Assassin");
-    }
-
-    private boolean isAssassinating = false;
-
-    public void registerKit() {
+    public AssassinClass(Player player) {
+        super(player);
+        this.name = "Assassin";
         this.armor = new ItemStack[] {
                 new ItemStack(Material.GOLDEN_BOOTS),
                 new ItemStack(Material.AIR),
@@ -53,6 +50,8 @@ public class AssassinClass extends CTFClass {
         };
         this.runnable = null;
     }
+
+    private boolean isAssassinating = false;
 
     public void assassinate() {
         this.isAssassinating = true;

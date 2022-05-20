@@ -19,14 +19,9 @@ import java.util.ArrayList;
 
 
 public class NinjaClass extends CTFClass {
-    public NinjaClass() {
-        super("Ninja");
-    }
-
-    private boolean isInvisible = false;
-    private boolean eggCooldown = false;
-
-    public void registerKit() {
+    public NinjaClass(Player player) {
+        super(player);
+        this.name = "Ninja";
         this.armor = new ItemStack[] {
                 new ItemStack(Material.AIR),
                 new ItemStack(Material.AIR),
@@ -63,6 +58,10 @@ public class NinjaClass extends CTFClass {
         initRunnable();
         this.runnableTicks = 10L;
     }
+
+    private boolean isInvisible = false;
+    private boolean eggCooldown = false;
+
 
     public void initRunnable() {
         this.runnable = new BukkitRunnable() {

@@ -19,6 +19,9 @@ public class Medic implements CommandExecutor {
             }
             CTFPlayer pl = ParallelCTF.gameManager.getPlayer(player);
             pl.setClass("Medic");
+            if (!ParallelCTF.gameManager.ctfMap.isPlayerInSpawn(pl)) {
+                pl.kill();
+            }
             ParallelCTF.sendMessageTo(player, "Equipped the Medic class!");
         }
         return true;

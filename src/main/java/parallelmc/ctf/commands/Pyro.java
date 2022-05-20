@@ -19,6 +19,9 @@ public class Pyro implements CommandExecutor {
             }
             CTFPlayer pl = ParallelCTF.gameManager.getPlayer(player);
             pl.setClass("Pyro");
+            if (!ParallelCTF.gameManager.ctfMap.isPlayerInSpawn(pl)) {
+                pl.kill();
+            }
             ParallelCTF.sendMessageTo(player, "Equipped the Pyro class!");
         }
         return true;

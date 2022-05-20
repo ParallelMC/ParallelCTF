@@ -19,6 +19,9 @@ public class Tank implements CommandExecutor {
             }
             CTFPlayer pl = ParallelCTF.gameManager.getPlayer(player);
             pl.setClass("Tank");
+            if (!ParallelCTF.gameManager.ctfMap.isPlayerInSpawn(pl)) {
+                pl.kill();
+            }
             ParallelCTF.sendMessageTo(player, "Equipped the Tank class!");
         }
         return true;

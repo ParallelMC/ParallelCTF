@@ -1,11 +1,8 @@
 package parallelmc.ctf;
 
 import fr.mrmicky.fastboard.FastBoard;
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.block.BlockFace;
+import org.bukkit.Location;
 import org.bukkit.entity.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -36,13 +33,24 @@ public class CTFPlayer {
         this.team = team;
     }
 
+    /***
+     * Changes this player's class
+     * @param name The name of the class to switch to
+     */
     public void setClass(String name) {
-        CTFClass cl = ParallelCTF.classes.get(name);
+        Class<? extends CTFClass> cl = ParallelCTF.classes.get(name);
         if (cl == null) {
             ParallelCTF.log(Level.SEVERE, "Unknown CTF class name " + name);
             return;
         }
-        this.ctfClass = cl;
+        try {
+            this.ctfClass = cl.getConstructor(Player.class).newInstance(player);
+        } catch (NoSuchMethodException ex) {
+            ParallelCTF.log(Level.SEVERE, "Missing constructor for class" + name);
+        } catch (Exception e) {
+            ParallelCTF.log(Level.SEVERE, "Failed to setClass for class " + name + ":\n" + e.getMessage());
+        }
+
         if (this.runnable != null) {
             runnable.cancel();
             runnable = null;
@@ -51,13 +59,16 @@ public class CTFPlayer {
             ctfClass.initRunnable();
             runnable = ctfClass.runnable.runTaskTimer(ParallelCTF.gameManager.getPlugin(), 1L, ctfClass.runnableTicks);
         }
-        ctfClass.giveClassTo(player);
+        ctfClass.giveClass();
     }
 
+    /***
+     * Updates the player's scoreboard
+     */
     public void updateBoard(int mins, int secs, int capsToWin, int redCaps, int blueCaps) {
         this.board.updateLines(
                 "",
-                "Time Left   | " + mins + ":" + (secs < 10 ? "0" + secs : secs),
+                "Time Left  | " + mins + ":" + (secs < 10 ? "0" + secs : secs),
                 "Your Team | " + (team == CTFTeam.RED ? "§cRed" : "§9Blue"),
                 "",
                 "§c§lRed",
@@ -70,8 +81,12 @@ public class CTFPlayer {
         );
     }
 
+    /***
+     * Ran when a medic heals another player
+     * The player is put on healing cooldown for a few seconds
+     */
     public void medicHeal() {
-        ctfClass.giveClassTo(player);
+        ctfClass.giveClass();
         player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 100, 4, true));
         healingCooldown = true;
         Bukkit.getScheduler().runTaskLater(ParallelCTF.gameManager.getPlugin(), () -> {
@@ -87,15 +102,12 @@ public class CTFPlayer {
         this.board.delete();
     }
 
-    /*
+    /***
         https://i.kym-cdn.com/photos/images/original/001/688/902/e4b.jpg
-
-        Prevents players from actually being killed, and spawns a villager in their place to represent death
+        "Kills" a player without them actually being killed, and spawns a villager in their place to represent death
     */
     public void kill() {
-        Villager villager = (Villager)player.getWorld().spawnEntity(player.getLocation(), EntityType.VILLAGER);
-        villager.damage(20D);
-        player.getWorld().playSound(net.kyori.adventure.sound.Sound.sound(Key.key("entity.villager.death"), Sound.Source.MASTER, 1, 1), Sound.Emitter.self());
+        Location vLoc = player.getLocation();
         if (this.team == CTFTeam.BLUE) {
             player.teleport(ParallelCTF.gameManager.ctfMap.blueSpawnPos);
         }
@@ -105,14 +117,21 @@ public class CTFPlayer {
         player.setFireTicks(0);
         player.setFallDistance(0);
         player.setHealth(20D);
-        ctfClass.giveClassTo(player);
+        ctfClass.giveClass();
         healingCooldown = false;
         if (ParallelCTF.gameManager.getBlueFlagCarrier() == this) {
             ParallelCTF.gameManager.ctfMap.resetBlueFlag();
+            ParallelCTF.sendMessage("§9Blue's Flag §ahas been reset!");
         }
         if (ParallelCTF.gameManager.getRedFlagCarrier() == this) {
             ParallelCTF.gameManager.ctfMap.resetRedFlag();
+            ParallelCTF.sendMessage("§cRed's Flag §ahas been reset!");
         }
+        Villager villager = (Villager)player.getWorld().spawnEntity(vLoc, EntityType.VILLAGER);
+        villager.setAI(false);
+        villager.setGravity(false);
+        villager.damage(20D);
+        villager.getWorld().playSound(vLoc, "entity.villager.death", 1, 1);
     }
 
     public Player getMcPlayer() { return this.player; }

@@ -4,17 +4,19 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 
 
 public class PyroClass extends CTFClass {
-    public PyroClass() {
-        super("Pyro");
-    }
-    public void registerKit() {
+    public PyroClass(Player player) {
+        super(player);
+        this.name = "Pyro";
         this.armor = new ItemStack[] {
                 new ItemStack(Material.LEATHER_BOOTS),
                 new ItemStack(Material.LEATHER_LEGGINGS),
@@ -45,6 +47,9 @@ public class PyroClass extends CTFClass {
         bmeta.lore(lore);
         bmeta.setUnbreakable(true);
         bow.setItemMeta(bmeta);
+        this.effects = new PotionEffect[] {
+                new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0, true)
+        };
         this.hotbar = new ItemStack[] {
                 axe,
                 food,

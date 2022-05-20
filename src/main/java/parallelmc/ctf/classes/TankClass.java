@@ -7,6 +7,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -16,11 +17,9 @@ import java.util.ArrayList;
 
 
 public class TankClass extends CTFClass {
-    public TankClass() {
-        super("Tank");
-    }
-
-    public void registerKit() {
+    public TankClass(Player player) {
+        super(player);
+        this.name = "Tank";
         this.armor = new ItemStack[] {
                 new ItemStack(Material.DIAMOND_BOOTS),
                 new ItemStack(Material.DIAMOND_LEGGINGS),

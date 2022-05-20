@@ -4,21 +4,19 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 
 
 public class MedicClass extends CTFClass {
-    public MedicClass() {
-        super("Medic");
-    }
-
-    public void registerKit() {
+    public MedicClass(Player player) {
+        super(player);
+        this.name = "Medic";
         this.armor = new ItemStack[] {
                 new ItemStack(Material.GOLDEN_BOOTS),
                 new ItemStack(Material.GOLDEN_LEGGINGS),

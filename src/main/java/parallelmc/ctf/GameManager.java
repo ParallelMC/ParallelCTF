@@ -11,6 +11,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
+import parallelmc.ctf.classes.DwarfClass;
 import parallelmc.ctf.classes.NinjaClass;
 
 import java.io.File;
@@ -42,6 +43,10 @@ public class GameManager {
         this.gameState = GameState.PREGAME;
     }
 
+    /***
+     * Adds a player to the game. The teams are auto balanced
+     * @param player The player to add
+     */
     public void addPlayer(Player player) {
         if (gameState == GameState.PREGAME) {
             player.teleport(ParallelCTF.gameManager.preGameLoc);
@@ -68,6 +73,10 @@ public class GameManager {
         }
     }
 
+    /***
+     * Removes a player from the game. The teams are currently NOT auto balanced when a player leaves
+     * @param player
+     */
     public void removePlayer(Player player) {
         CTFPlayer pl = getPlayer(player);
         if (pl.getTeam() == CTFTeam.RED) {
@@ -79,10 +88,20 @@ public class GameManager {
         players.remove(player);
     }
 
+    /***
+     * Retrieve a CTFPlayer instance for a player
+     * @param player The player to get
+     * @return a CTFPlayer
+     */
     public CTFPlayer getPlayer(Player player) {
         return players.get(player);
     }
 
+    /***
+     * Switches a player's team
+     * @param player The player to switch
+     * @param newTeam The team they will join
+     */
     public void changeTeam(Player player, CTFTeam newTeam) {
         CTFPlayer pl = players.get(player);
         if (newTeam == CTFTeam.RED) {
@@ -96,7 +115,10 @@ public class GameManager {
         pl.setTeam(newTeam);
     }
 
-    // will allow hot loading of different maps between rounds in the future
+    /***
+     * Loads a map from a file config
+     * Will allow hot loading of different maps between rounds in the future
+     */
     public void loapMap() {
         FileConfiguration config = new YamlConfiguration();
         try {
@@ -123,6 +145,10 @@ public class GameManager {
         ParallelCTF.log(Level.WARNING, "Loaded CTF Map " + this.ctfMap.name);
     }
 
+    /***
+     * Starts the game
+     * Each player will be given the Tank class by default
+     */
     public void start() {
         players.forEach((p, cp) -> {
             cp.setClass("Tank");
@@ -137,8 +163,12 @@ public class GameManager {
         this.gameState = GameState.PLAY;
     }
 
-    public void endGame(CTFTeam winner) {
-        ParallelCTF.sendMessage((winner == CTFTeam.BLUE ? "§9Blue Team" : "§cRed Team") + " §ais the winner!");
+    /***
+     * Ends the game and resets everything
+     * @param winner The team who won, or null if the game was a tie
+     */
+    public void endGame(@Nullable CTFTeam winner) {
+        ParallelCTF.sendMessage((winner == null ? "The game ended in a tie!" : ((winner == CTFTeam.BLUE ? "§9Blue Team" : "§cRed Team")) + " §ais the winner!"));
         ctfMap.resetRedFlag();
         ctfMap.resetBlueFlag();
         redCaptures = 0;
@@ -157,6 +187,9 @@ public class GameManager {
         gameState = GameState.PREGAME;
     }
 
+    /***
+     * The main game loop, which handles most game logic
+     */
     private void startGameLoop() {
         // time loop
         this.plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
@@ -166,9 +199,12 @@ public class GameManager {
                 c.updateBoard(mins, secs, capturesToWin, redCaptures, blueCaptures);
             });
             secondsLeft--;
+            if (secondsLeft <= 0) {
+                decideWinner();
+            }
         }, 0L, 20L);
         // distance check loop
-        // spawn camping and flag captures are ran here
+        // spawn camping and flag captures are ran here every 1/4 sec
         // running them every tick would be too expensive
         this.plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             this.ctfMap.checkSpawnCamping();
@@ -188,6 +224,10 @@ public class GameManager {
                     else if (ninja.isInvisible()) {
                         ninja.goVisibleTo(p, c.getTeam() == CTFTeam.RED ? CTFTeam.BLUE : CTFTeam.RED);
                     }
+                }
+                // dwarfs intentionally cannot sprint, so dont update their food bar
+                if (!(c.getCtfClass() instanceof DwarfClass)) {
+                    p.setFoodLevel(20);
                 }
             });
         }, 0L, 1L);
@@ -219,6 +259,21 @@ public class GameManager {
     }
 
     public Plugin getPlugin() { return this.plugin; }
+
+    /***
+     * Decides the winner in the case of a force end or the clock hits zero
+     */
+    public void decideWinner() {
+        if (blueCaptures > redCaptures) {
+            endGame(CTFTeam.BLUE);
+        }
+        else if (redCaptures > blueCaptures) {
+            endGame(CTFTeam.RED);
+        }
+        else {
+            endGame(null);
+        }
+    }
 
     public void addRedCapture() {
         this.redCaptures++;

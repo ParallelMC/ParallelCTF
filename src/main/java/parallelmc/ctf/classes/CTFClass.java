@@ -13,15 +13,11 @@ public class CTFClass {
     public PotionEffect[] effects;
     public BukkitRunnable runnable;
     public long runnableTicks;
-    public Player player;
+    protected final Player player;
 
-    public CTFClass(String name) {
-        this.name = name;
-    }
+    public CTFClass(Player player) { this.player = player; }
 
-    public void registerKit() { }
-
-    public void giveClassTo(Player player) {
+    public void giveClass() {
         player.getInventory().clear();
         player.setExp(0);
         player.setLevel(0);
@@ -39,7 +35,6 @@ public class CTFClass {
                 player.addPotionEffect(e);
             }
         }
-        this.player = player;
     }
 
     public void initRunnable() { }

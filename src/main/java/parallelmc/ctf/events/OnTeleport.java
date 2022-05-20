@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import parallelmc.ctf.CTFPlayer;
 import parallelmc.ctf.CTFTeam;
 import parallelmc.ctf.ParallelCTF;
 
@@ -14,6 +15,8 @@ public class OnTeleport implements Listener {
             Player player = event.getPlayer();
             event.setCancelled(true);
             if (player.getHealth() - 4D <= 0) {
+                CTFPlayer pl = ParallelCTF.gameManager.getPlayer(player);
+                ParallelCTF.sendMessage((pl.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + player.getName() + " §adied from an Ender Pearl.");
                 ParallelCTF.gameManager.getPlayer(player).kill();
             } else {
                 // 2 hearts of damage instead of 2.5

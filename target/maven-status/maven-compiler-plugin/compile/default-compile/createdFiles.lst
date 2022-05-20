@@ -7,6 +7,7 @@ parallelmc\ctf\classes\SoldierClass.class
 parallelmc\ctf\GameState.class
 parallelmc\ctf\classes\MedicClass.class
 fr\mrmicky\fastboard\FastBoard$TeamMode.class
+parallelmc\ctf\commands\Classes.class
 parallelmc\ctf\events\OnCreatureSpawn.class
 parallelmc\ctf\commands\Tank.class
 parallelmc\ctf\ParallelCTF.class
@@ -17,12 +18,14 @@ parallelmc\ctf\commands\Assassin.class
 parallelmc\ctf\events\OnProjectileThrown.class
 parallelmc\ctf\commands\Debug.class
 parallelmc\ctf\events\OnDamageEntity.class
+parallelmc\ctf\commands\EndGame.class
 parallelmc\ctf\classes\CTFClass.class
 parallelmc\ctf\CTFPlayer.class
 parallelmc\ctf\commands\ChangeTeam.class
 parallelmc\ctf\classes\NinjaClass.class
 parallelmc\ctf\events\OnTeleport.class
 parallelmc\ctf\CTFTeam.class
+parallelmc\ctf\events\OnInventoryClick.class
 fr\mrmicky\fastboard\FastBoard.class
 parallelmc\ctf\commands\ForceTeam.class
 parallelmc\ctf\classes\ArcherClass.class

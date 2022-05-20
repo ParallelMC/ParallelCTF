@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -11,12 +12,10 @@ import java.util.ArrayList;
 
 
 public class ArcherClass extends CTFClass {
-    public ArcherClass() {
-        super("Archer");
-    }
-    public void registerKit() {
+    public ArcherClass(Player player) {
+        super(player);
+        this.name = "Archer";
         this.armor = new ItemStack[] {
-
                 new ItemStack(Material.CHAINMAIL_BOOTS),
                 new ItemStack(Material.CHAINMAIL_LEGGINGS),
                 new ItemStack(Material.CHAINMAIL_CHESTPLATE),

@@ -3,29 +3,21 @@ package parallelmc.ctf.classes;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import parallelmc.ctf.ParallelCTF;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 
 public class DwarfClass extends CTFClass {
-    public DwarfClass() {
-        super("Dwarf");
-    }
-
-    private int level = 0;
-
-    public int getLevel() {
-        return this.level;
-    }
-
-    public void registerKit() {
+    public DwarfClass(Player player) {
+        super(player);
+        this.name = "Dwarf";
         this.armor = new ItemStack[] {
                 new ItemStack(Material.CHAINMAIL_BOOTS),
                 new ItemStack(Material.DIAMOND_LEGGINGS),
@@ -57,6 +49,12 @@ public class DwarfClass extends CTFClass {
         };
         initRunnable();
         this.runnableTicks = 10L;
+    }
+
+    private int level = 0;
+
+    public int getLevel() {
+        return this.level;
     }
 
     public void initRunnable() {

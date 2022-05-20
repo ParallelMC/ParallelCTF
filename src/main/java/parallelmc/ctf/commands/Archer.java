@@ -19,6 +19,9 @@ public class Archer implements CommandExecutor {
             }
             CTFPlayer pl = ParallelCTF.gameManager.getPlayer(player);
             pl.setClass("Archer");
+            if (!ParallelCTF.gameManager.ctfMap.isPlayerInSpawn(pl)) {
+                pl.kill();
+            }
             ParallelCTF.sendMessageTo(player, "Equipped the Archer class!");
         }
         return true;

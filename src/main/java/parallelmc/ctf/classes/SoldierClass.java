@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import parallelmc.ctf.ParallelCTF;
@@ -12,13 +13,9 @@ import java.util.ArrayList;
 
 
 public class SoldierClass extends CTFClass {
-    public SoldierClass() {
-        super("Soldier");
-    }
-
-    private boolean wallClimbCooldown = false;
-
-    public void registerKit() {
+    public SoldierClass(Player player) {
+        super(player);
+        this.name = "Soldier";
         this.armor = new ItemStack[] {
                 new ItemStack(Material.IRON_BOOTS),
                 new ItemStack(Material.IRON_LEGGINGS),
@@ -48,11 +45,14 @@ public class SoldierClass extends CTFClass {
         this.runnable = null;
     }
 
+    private boolean wallClimbCooldown = false;
+
+
     public void setWallClimbOnCooldown() {
         this.wallClimbCooldown = true;
         Bukkit.getScheduler().runTaskLater(ParallelCTF.gameManager.getPlugin(), () -> {
             this.wallClimbCooldown = false;
-        }, 10L);
+        }, 20L);
     }
 
     public boolean isWallClimbOnCooldown() { return wallClimbCooldown; }

@@ -19,6 +19,9 @@ public class Dwarf implements CommandExecutor {
             }
             CTFPlayer pl = ParallelCTF.gameManager.getPlayer(player);
             pl.setClass("Dwarf");
+            if (!ParallelCTF.gameManager.ctfMap.isPlayerInSpawn(pl)) {
+                pl.kill();
+            }
             ParallelCTF.sendMessageTo(player, "Equipped the Dwarf class!");
         }
         return true;

@@ -16,24 +16,19 @@ import java.util.logging.Level;
 
 public class ParallelCTF extends JavaPlugin {
     public static Level LOG_LEVEL = Level.INFO;
-    public static final HashMap<String, CTFClass> classes = new HashMap<>();
+    public static final HashMap<String, Class<? extends CTFClass>> classes = new HashMap<>();
     public static GameManager gameManager;
-    private FileConfiguration config;
 
     @Override
     public void onLoad() {
-        classes.put("Tank", new TankClass());
-        classes.put("Soldier", new SoldierClass());
-        classes.put("Medic", new MedicClass());
-        classes.put("Archer", new ArcherClass());
-        classes.put("Ninja", new NinjaClass());
-        classes.put("Pyro", new PyroClass());
-        classes.put("Assassin", new AssassinClass());
-        classes.put("Dwarf", new DwarfClass());
-        // separate register function for items
-        for (CTFClass c : classes.values()) {
-            c.registerKit();
-        }
+        classes.put("Archer", ArcherClass.class);
+        classes.put("Assassin", AssassinClass.class);
+        classes.put("Dwarf", DwarfClass.class);
+        classes.put("Medic", MedicClass.class);
+        classes.put("Ninja", NinjaClass.class);
+        classes.put("Pyro", PyroClass.class);
+        classes.put("Soldier", SoldierClass.class);
+        classes.put("Tank", TankClass.class);
     }
 
     @Override
@@ -52,11 +47,13 @@ public class ParallelCTF extends JavaPlugin {
         manager.registerEvents(new OnCreatureSpawn(), this);
         manager.registerEvents(new OnProjectileThrown(), this);
         manager.registerEvents(new OnChangeHeldItem(), this);
-        // manager.registerEvents(new OnDeath(), this);
+        manager.registerEvents(new OnInventoryClick(), this);
         this.getCommand("startgame").setExecutor(new StartGame());
+        this.getCommand("endgame").setExecutor(new EndGame());
         this.getCommand("debug").setExecutor(new Debug());
         this.getCommand("team").setExecutor(new ChangeTeam());
         this.getCommand("forceteam").setExecutor(new ForceTeam());
+        this.getCommand("classes").setExecutor(new Classes());
         this.getCommand("tank").setExecutor(new Tank());
         this.getCommand("soldier").setExecutor(new Soldier());
         this.getCommand("medic").setExecutor(new Medic());
@@ -67,7 +64,7 @@ public class ParallelCTF extends JavaPlugin {
         this.getCommand("dwarf").setExecutor(new Dwarf());
 
         // load config
-        config = this.getConfig();
+        FileConfiguration config = this.getConfig();
         gameManager = new GameManager(this,
                 new Location(this.getServer().getWorld("world-ctf"), config.getDouble("pregame.x"), config.getDouble("pregame.y"), config.getDouble("pregame.z")),
                 config.getInt("win_captures"));
@@ -75,9 +72,7 @@ public class ParallelCTF extends JavaPlugin {
     }
 
     @Override
-    public void onDisable() {
-
-    }
+    public void onDisable() { }
 
     public static void log(String message) {
         Bukkit.getLogger().log(LOG_LEVEL, "[ParallelCTF] " + message);
@@ -97,6 +92,4 @@ public class ParallelCTF extends JavaPlugin {
             sendMessageTo(p, message);
         }
     }
-
-
 }
