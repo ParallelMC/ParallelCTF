@@ -137,6 +137,26 @@ public class GameManager {
         this.gameState = GameState.PLAY;
     }
 
+    public void endGame(CTFTeam winner) {
+        ParallelCTF.sendMessage((winner == CTFTeam.BLUE ? "§9Blue Team" : "§cRed Team") + " §ais the winner!");
+        ctfMap.resetRedFlag();
+        ctfMap.resetBlueFlag();
+        redCaptures = 0;
+        blueCaptures = 0;
+        secondsLeft = 1800;
+        players.forEach((p, cp) -> {
+            p.getInventory().clear();
+            p.getActivePotionEffects().clear();
+            p.setHealth(20D);
+            p.setFoodLevel(20);
+            p.setExp(0F);
+            p.setLevel(0);
+            p.teleport(preGameLoc);
+            this.plugin.getServer().getScheduler().cancelTasks(plugin);
+        });
+        gameState = GameState.PREGAME;
+    }
+
     private void startGameLoop() {
         // time loop
         this.plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
@@ -202,19 +222,15 @@ public class GameManager {
 
     public void addRedCapture() {
         this.redCaptures++;
-        setBlueFlagTaken(false);
-        setBlueFlagCarrier(null);
         if (redCaptures >= capturesToWin) {
-            // TODO: red win
+            endGame(CTFTeam.RED);
         }
     }
 
     public void addBlueCapture() {
         this.blueCaptures++;
-        setRedFlagTaken(false);
-        setRedFlagCarrier(null);
         if (blueCaptures >= capturesToWin) {
-            // TODO: red win
+            endGame(CTFTeam.BLUE);
         }
     }
 

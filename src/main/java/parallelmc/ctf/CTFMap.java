@@ -42,7 +42,7 @@ public class CTFMap {
         for (Entity e : world.getNearbyEntities(redBB)) {
             if (e instanceof Player p) {
                 CTFPlayer cP = ParallelCTF.gameManager.getPlayer(p);
-                if (cP.getTeam() == CTFTeam.BLUE) {
+                if (cP.getTeam() == CTFTeam.BLUE || cP == ParallelCTF.gameManager.getBlueFlagCarrier()) {
                     cP.kill();
                     ParallelCTF.sendMessageTo(p, "Do not try to spawn camp!");
                 }
@@ -55,7 +55,7 @@ public class CTFMap {
         for (Entity e : world.getNearbyEntities(blueBB)) {
             if (e instanceof Player p) {
                 CTFPlayer cP = ParallelCTF.gameManager.getPlayer(p);
-                if (cP.getTeam() == CTFTeam.RED) {
+                if (cP.getTeam() == CTFTeam.RED || cP == ParallelCTF.gameManager.getRedFlagCarrier()) {
                     cP.kill();
                     ParallelCTF.sendMessageTo(p, "Do not try to spawn camp!");
                 }
@@ -66,9 +66,22 @@ public class CTFMap {
         }
     }
 
+    public void resetBlueFlag() {
+        world.getBlockAt(blueFlagPos).getRelative(BlockFace.UP).setType(Material.BLUE_BANNER);
+        ParallelCTF.gameManager.setBlueFlagTaken(false);
+        ParallelCTF.gameManager.setBlueFlagCarrier(null);
+        ParallelCTF.sendMessage("§9Blue's Flag §ahas been reset!");
+    }
+
+    public void resetRedFlag() {
+        world.getBlockAt(redFlagPos).getRelative(BlockFace.UP).setType(Material.RED_BANNER);
+        ParallelCTF.gameManager.setRedFlagTaken(false);
+        ParallelCTF.gameManager.setRedFlagCarrier(null);
+        ParallelCTF.sendMessage("§cRed's Flag §ahas been reset!");
+    }
+
     public void checkFlagTaken() {
         if (!ParallelCTF.gameManager.isBlueFlagTaken()) {
-            world.getNearbyEntities(blueFlagPos, 1, 2, 1).forEach(x -> ParallelCTF.log(x.getName()));
             for (Entity e : world.getNearbyEntities(blueFlagPos, 1, 2, 1)) {
                 if (e instanceof Player p) {
                     CTFPlayer player = ParallelCTF.gameManager.getPlayer(p);
@@ -78,7 +91,7 @@ public class CTFMap {
                         p.getInventory().setItem(EquipmentSlot.HEAD, banner);
                         ParallelCTF.gameManager.setBlueFlagCarrier(player);
                         ParallelCTF.gameManager.setBlueFlagTaken(true);
-                        world.spawnEntity(blueFlagPos.add(0, 50, 0), EntityType.LIGHTNING);
+                        world.spawnEntity(blueFlagPos.clone().add(0, 50, 0), EntityType.LIGHTNING);
                         ParallelCTF.sendMessage("§c" + p.getName() + " §ahas taken §9Blue's Flag!");
                         break;
                     }
@@ -94,7 +107,7 @@ public class CTFMap {
                     player.getMcPlayer().getInventory().setItem(EquipmentSlot.HEAD, banner);
                     ParallelCTF.gameManager.setRedFlagCarrier(player);
                     ParallelCTF.gameManager.setRedFlagTaken(true);
-                    world.spawnEntity(redFlagPos.add(0, 50, 0), EntityType.LIGHTNING);
+                    world.spawnEntity(redFlagPos.clone().add(0, 50, 0), EntityType.LIGHTNING);
                     ParallelCTF.sendMessage("§9" + player.getMcPlayer().getName() + " §ahas taken §cRed's Flag!");
                     break;
                 }
@@ -107,9 +120,9 @@ public class CTFMap {
             Player player = ParallelCTF.gameManager.getRedFlagCarrier().getMcPlayer();
             if (player.getLocation().distanceSquared(blueFlagPos) < 2) {
                 player.getInventory().setItem(EquipmentSlot.HEAD, ParallelCTF.gameManager.getRedFlagCarrier().getCtfClass().armor[3]);
-                world.getBlockAt(redFlagPos).getRelative(BlockFace.UP).setType(Material.RED_BANNER);
-                world.spawnEntity(blueFlagPos.add(0, 50, 0), EntityType.LIGHTNING);
+                world.spawnEntity(blueFlagPos.clone().add(0, 50, 0), EntityType.LIGHTNING);
                 ParallelCTF.sendMessage("§9" + player.getName() + " §ahas captured §cRed's Flag!");
+                resetRedFlag();
                 ParallelCTF.gameManager.addBlueCapture();
             }
         }
@@ -117,9 +130,9 @@ public class CTFMap {
             Player player = ParallelCTF.gameManager.getBlueFlagCarrier().getMcPlayer();
             if (player.getLocation().distanceSquared(redFlagPos) < 2) {
                 player.getInventory().setItem(EquipmentSlot.HEAD, ParallelCTF.gameManager.getBlueFlagCarrier().getCtfClass().armor[3]);
-                world.getBlockAt(blueFlagPos).getRelative(BlockFace.UP).setType(Material.BLUE_BANNER);
-                world.spawnEntity(redFlagPos.add(0, 50, 0), EntityType.LIGHTNING);
+                world.spawnEntity(redFlagPos.clone().add(0, 50, 0), EntityType.LIGHTNING);
                 ParallelCTF.sendMessage("§c" + player.getName() + " §ahas captured §9Blue's Flag!");
+                resetBlueFlag();
                 ParallelCTF.gameManager.addRedCapture();
             }
         }

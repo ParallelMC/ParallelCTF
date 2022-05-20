@@ -4,6 +4,8 @@ import fr.mrmicky.fastboard.FastBoard;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -105,6 +107,12 @@ public class CTFPlayer {
         player.setHealth(20D);
         ctfClass.giveClassTo(player);
         healingCooldown = false;
+        if (ParallelCTF.gameManager.getBlueFlagCarrier() == this) {
+            ParallelCTF.gameManager.ctfMap.resetBlueFlag();
+        }
+        if (ParallelCTF.gameManager.getRedFlagCarrier() == this) {
+            ParallelCTF.gameManager.ctfMap.resetRedFlag();
+        }
     }
 
     public Player getMcPlayer() { return this.player; }

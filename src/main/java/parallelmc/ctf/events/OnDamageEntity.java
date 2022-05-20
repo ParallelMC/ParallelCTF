@@ -8,6 +8,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import parallelmc.ctf.CTFPlayer;
+import parallelmc.ctf.CTFTeam;
 import parallelmc.ctf.ParallelCTF;
 import parallelmc.ctf.classes.AssassinClass;
 import parallelmc.ctf.classes.MedicClass;
@@ -39,6 +40,7 @@ public class OnDamageEntity implements Listener {
                 if (pla.getCtfClass() instanceof PyroClass) {
                     if (attacker.getInventory().getItemInMainHand().getType() == Material.DIAMOND_AXE) {
                         if (victim.getFireTicks() > 0) {
+                            ParallelCTF.sendMessage((plv.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + victim.getName() + " was axed by " + (pla.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + attacker.getName());
                             event.setCancelled(true);
                             plv.kill();
                         }
@@ -54,11 +56,13 @@ public class OnDamageEntity implements Listener {
                 if (plv.getCtfClass() instanceof AssassinClass assassin) {
                     if (assassin.isAssassinating()) {
                         // assassins can be instakilled while assassinating
+                        ParallelCTF.sendMessage((plv.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + victim.getName() + " was assassinated by " + (pla.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + attacker.getName());
                         event.setCancelled(true);
                         plv.kill();
                     }
                 }
                 if (victim.getHealth() - event.getDamage() <= 0D) {
+                    ParallelCTF.sendMessage((plv.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + victim.getName() + " was slain by " + (pla.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + attacker.getName());
                     event.setCancelled(true);
                     plv.kill();
                 }

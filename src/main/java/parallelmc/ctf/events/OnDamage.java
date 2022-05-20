@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import parallelmc.ctf.CTFPlayer;
+import parallelmc.ctf.CTFTeam;
 import parallelmc.ctf.ParallelCTF;
 import parallelmc.ctf.classes.SoldierClass;
 
@@ -21,6 +22,7 @@ public class OnDamage implements Listener {
             }
             if (player.getHealth() - event.getDamage() <= 0D) {
                 event.setCancelled(true);
+                ParallelCTF.sendMessage((pl.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + player.getName() + " died to " + event.getCause());
                 pl.kill();
             }
         }
