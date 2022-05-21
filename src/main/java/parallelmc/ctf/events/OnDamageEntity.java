@@ -9,6 +9,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import parallelmc.ctf.CTFPlayer;
 import parallelmc.ctf.CTFTeam;
+import parallelmc.ctf.GameState;
 import parallelmc.ctf.ParallelCTF;
 import parallelmc.ctf.classes.AssassinClass;
 import parallelmc.ctf.classes.MedicClass;
@@ -18,8 +19,16 @@ public class OnDamageEntity implements Listener {
     @EventHandler
     public void onDamageEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player attacker && event.getEntity() instanceof Player victim) {
+            if (ParallelCTF.gameManager.gameState == GameState.PREGAME) {
+                event.setCancelled(true);
+                return;
+            }
             CTFPlayer pla = ParallelCTF.gameManager.getPlayer(attacker);
             CTFPlayer plv = ParallelCTF.gameManager.getPlayer(victim);
+            if (pla.getTeam() == CTFTeam.SPECTATOR || plv.getTeam() == CTFTeam.SPECTATOR) {
+                event.setCancelled(true);
+                return;
+            }
             if (pla.getTeam() == plv.getTeam()) {
                 if (pla.getCtfClass() instanceof MedicClass) {
                     if (plv.isHealingOnCooldown()) {
@@ -31,9 +40,6 @@ public class OnDamageEntity implements Listener {
                     plv.medicHeal();
                     ParallelCTF.sendMessageTo(victim, "You were healed by " + attacker.getName() + "! You can be healed again in 15 seconds.");
                     ParallelCTF.sendMessageTo(attacker, "You healed " + victim.getName() + "! They can be healed again in 15 seconds.");
-                }
-                else {
-                    event.setCancelled(true);
                 }
             }
             else {

@@ -10,6 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 import parallelmc.ctf.classes.NinjaClass;
 
@@ -113,6 +116,7 @@ public class CTFMap {
                         world.getBlockAt(blueFlagPos).getRelative(BlockFace.UP).setType(Material.AIR);
                         ItemStack banner = new ItemStack(Material.BLUE_BANNER);
                         p.getInventory().setItem(EquipmentSlot.HEAD, banner);
+                        p.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, true, false));
                         ParallelCTF.gameManager.setBlueFlagCarrier(player);
                         ParallelCTF.gameManager.setBlueFlagTaken(true);
                         world.spawnEntity(blueFlagPos.clone().add(0, 50, 0), EntityType.LIGHTNING);
@@ -131,11 +135,12 @@ public class CTFMap {
                             continue;
                         world.getBlockAt(redFlagPos).getRelative(BlockFace.UP).setType(Material.AIR);
                         ItemStack banner = new ItemStack(Material.RED_BANNER);
-                        player.getMcPlayer().getInventory().setItem(EquipmentSlot.HEAD, banner);
+                        p.getInventory().setItem(EquipmentSlot.HEAD, banner);
+                        p.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, true, false));
                         ParallelCTF.gameManager.setRedFlagCarrier(player);
                         ParallelCTF.gameManager.setRedFlagTaken(true);
                         world.spawnEntity(redFlagPos.clone().add(0, 50, 0), EntityType.LIGHTNING);
-                        ParallelCTF.sendMessage("§9" + player.getMcPlayer().getName() + " §ahas taken §cRed's Flag!");
+                        ParallelCTF.sendMessage("§9" + p.getName() + " §ahas taken §cRed's Flag!");
                         break;
                     }
                 }
@@ -152,6 +157,7 @@ public class CTFMap {
             Player player = ParallelCTF.gameManager.getRedFlagCarrier().getMcPlayer();
             if (player.getLocation().distanceSquared(blueFlagPos) < 2) {
                 player.getInventory().setItem(EquipmentSlot.HEAD, ParallelCTF.gameManager.getRedFlagCarrier().getCtfClass().armor[3]);
+                player.removePotionEffect(PotionEffectType.GLOWING);
                 world.spawnEntity(blueFlagPos.clone().add(0, 50, 0), EntityType.LIGHTNING);
                 ParallelCTF.sendMessage("§9" + player.getName() + " §ahas captured §cRed's Flag!");
                 resetRedFlag();
@@ -162,6 +168,7 @@ public class CTFMap {
             Player player = ParallelCTF.gameManager.getBlueFlagCarrier().getMcPlayer();
             if (player.getLocation().distanceSquared(redFlagPos) < 2) {
                 player.getInventory().setItem(EquipmentSlot.HEAD, ParallelCTF.gameManager.getBlueFlagCarrier().getCtfClass().armor[3]);
+                player.removePotionEffect(PotionEffectType.GLOWING);
                 world.spawnEntity(redFlagPos.clone().add(0, 50, 0), EntityType.LIGHTNING);
                 ParallelCTF.sendMessage("§c" + player.getName() + " §ahas captured §9Blue's Flag!");
                 resetBlueFlag();

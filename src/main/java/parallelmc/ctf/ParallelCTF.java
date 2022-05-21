@@ -42,6 +42,8 @@ public class ParallelCTF extends JavaPlugin {
         manager.registerEvents(new OnRightClick(), this);
         manager.registerEvents(new OnPlayerLeave(), this);
         manager.registerEvents(new OnDropItem(), this);
+        manager.registerEvents(new OnBlockBreak(), this);
+        manager.registerEvents(new OnPlaceBlock(), this);
         manager.registerEvents(new OnDamage(), this);
         manager.registerEvents(new OnDamageEntity(), this);
         manager.registerEvents(new OnBowShoot(), this);
@@ -51,6 +53,7 @@ public class ParallelCTF extends JavaPlugin {
         manager.registerEvents(new OnProjectileThrown(), this);
         manager.registerEvents(new OnChangeHeldItem(), this);
         manager.registerEvents(new OnInventoryClick(), this);
+        manager.registerEvents(new OnChat(), this);
         this.getCommand("startgame").setExecutor(new StartGame());
         this.getCommand("endgame").setExecutor(new EndGame());
         this.getCommand("debug").setExecutor(new Debug());

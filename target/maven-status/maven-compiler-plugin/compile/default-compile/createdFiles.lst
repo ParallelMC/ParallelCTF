@@ -20,6 +20,8 @@ parallelmc\ctf\commands\Debug.class
 parallelmc\ctf\events\OnDamageEntity.class
 parallelmc\ctf\commands\EndGame.class
 parallelmc\ctf\classes\CTFClass.class
+parallelmc\ctf\events\OnBlockBreak.class
+parallelmc\ctf\events\OnChat.class
 parallelmc\ctf\CTFPlayer.class
 parallelmc\ctf\commands\ChangeTeam.class
 parallelmc\ctf\classes\NinjaClass.class
@@ -49,4 +51,5 @@ parallelmc\ctf\CTFMap.class
 parallelmc\ctf\classes\DwarfClass.class
 parallelmc\ctf\events\OnProjectileHit.class
 parallelmc\ctf\commands\StartGame.class
+parallelmc\ctf\events\OnPlaceBlock.class
 parallelmc\ctf\events\OnPlayerJoin.class

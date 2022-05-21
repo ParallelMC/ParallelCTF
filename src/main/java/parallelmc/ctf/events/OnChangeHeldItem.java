@@ -21,7 +21,7 @@ public class OnChangeHeldItem implements Listener {
             if (held != null) {
                 // redo enchantments when switching to the sword to prevent a lvl 0 dwarf having a lvl 10 sword, for instance
                 // looping through the dwarf's inventory each level when not held would be tedious imo
-                if (held.getType() == Material.DIAMOND_SWORD) {
+                if (held.getType() == Material.NETHERITE_SWORD) {
                     int level = dwarf.getLevel();
                     held.getEnchantments().forEach((e, l) -> {
                         held.removeEnchantment(e);

@@ -13,6 +13,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import parallelmc.ctf.ArrowShot;
 import parallelmc.ctf.CTFPlayer;
+import parallelmc.ctf.CTFTeam;
 import parallelmc.ctf.ParallelCTF;
 import parallelmc.ctf.classes.*;
 
@@ -26,23 +27,29 @@ public class OnProjectileHit implements Listener {
         Block hitBlock = event.getHitBlock();
         Entity projectile = event.getEntity();
         if (hitEntity instanceof Player hitPlayer) {
-            if (projectile instanceof Arrow) {
+            if (projectile instanceof Arrow arrow) {
                 ArrowShot shot = ParallelCTF.gameManager.getShot(projectile);
+                CTFPlayer hpl= ParallelCTF.gameManager.getPlayer(hitPlayer);
                 if (shot != null) {
                     CTFPlayer pl = ParallelCTF.gameManager.getPlayer(shot.shooter());
                     if (pl.getCtfClass() instanceof ArcherClass) {
                         // arrow 30+ blocks away is snipe
                         double dist = shot.shotLocation().distance(hitEntity.getLocation());
                         if (dist > 30D) {
-                            ParallelCTF.gameManager.getPlayer(hitPlayer).kill();
+                            hpl.kill();
                             ParallelCTF.sendMessageTo(hitPlayer, "You were sniped by " + shot.shooter().getName() + " from " + Math.round(dist) + " blocks away!");
                             ParallelCTF.sendMessageTo(shot.shooter(), "You sniped " + hitPlayer.getName() + " from " + Math.round(dist) + " blocks away!");
+                            ParallelCTF.sendMessage((hpl.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + hitPlayer.getName() + " was sniped by " + shot.shooter().getName());
                         }
                     }
                     // remove the shot either way
                     ParallelCTF.gameManager.removeShot(projectile);
                     projectile.remove();
 
+                }
+                if (hitPlayer.getHealth() - arrow.getDamage() <= 0D) {
+                    hpl.kill();
+                    ParallelCTF.sendMessage((hpl.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + hitPlayer.getName() + " was shot by " + ((Player)arrow.getShooter()).getName());
                 }
             }
             else if (projectile instanceof Egg) {

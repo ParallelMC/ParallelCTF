@@ -13,7 +13,7 @@ public class OnPlayerJoin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        p.setGameMode(GameMode.ADVENTURE);
+        p.setGameMode(GameMode.SURVIVAL);
         p.getInventory().clear();
         p.getActivePotionEffects().clear();
         p.setHealth(20D);

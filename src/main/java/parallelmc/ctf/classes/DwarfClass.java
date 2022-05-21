@@ -33,7 +33,7 @@ public class DwarfClass extends CTFClass {
         ArrayList<Component> lore = new ArrayList<>();
         lore.add(Component.text("Right-click to restore health!"));
         food.lore(lore);
-        ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
+        ItemStack sword = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = sword.getItemMeta();
         meta.setUnbreakable(true);
         meta.displayName(Component.text("§fDwarf Sword"));
@@ -45,7 +45,7 @@ public class DwarfClass extends CTFClass {
                 food
         };
         this.effects = new PotionEffect[] {
-                new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 1, true)
+                new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0, true)
         };
         initRunnable();
         this.runnableTicks = 10L;
@@ -64,7 +64,7 @@ public class DwarfClass extends CTFClass {
                 // dwarves cant sprint
                 player.setFoodLevel(6);
                 if (player.isSneaking()) {
-                    if (player.getInventory().getItemInMainHand().getType() == Material.DIAMOND_SWORD && level < 10) {
+                    if (player.getInventory().getItemInMainHand().getType() == Material.NETHERITE_SWORD && level < 10) {
                         player.giveExp(1);
                     }
                 }
@@ -78,7 +78,7 @@ public class DwarfClass extends CTFClass {
                 if (previous != level) {
                     ItemStack sword = player.getInventory().getItemInMainHand();
                     // check again if they're actually holding the sword
-                    if (sword.getType() == Material.DIAMOND_SWORD) {
+                    if (sword.getType() == Material.NETHERITE_SWORD) {
                         sword.getEnchantments().forEach((e, l) -> {
                             sword.removeEnchantment(e);
                         });

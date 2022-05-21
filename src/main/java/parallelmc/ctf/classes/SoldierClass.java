@@ -52,7 +52,7 @@ public class SoldierClass extends CTFClass {
         this.wallClimbCooldown = true;
         Bukkit.getScheduler().runTaskLater(ParallelCTF.gameManager.getPlugin(), () -> {
             this.wallClimbCooldown = false;
-        }, 20L);
+        }, 10L);
     }
 
     public boolean isWallClimbOnCooldown() { return wallClimbCooldown; }

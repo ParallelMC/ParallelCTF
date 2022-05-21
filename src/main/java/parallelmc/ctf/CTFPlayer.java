@@ -66,7 +66,7 @@ public class CTFPlayer {
     /***
      * Updates the player's scoreboard
      */
-    public void updateBoard(int mins, int secs, int capsToWin, int redCaps, int blueCaps) {
+    public void updateBoard(int mins, int secs, int capsToWin, int redCaps, int blueCaps, String... flagLines) {
         this.board.updateLines(
                 "",
                 "Time Left  | " + mins + ":" + (secs < 10 ? "0" + secs : secs),
@@ -74,11 +74,12 @@ public class CTFPlayer {
                 "",
                 "§c§lRed",
                 "§cCaptures | " + redCaps + "/" + capsToWin,
-                "§cFlag Status | " + (ParallelCTF.gameManager.isRedFlagTaken() ? "Held by " + ParallelCTF.gameManager.getRedFlagCarrier().getMcPlayer().getName() : "Home"),
-                "",
+                flagLines[0],
+                flagLines[1],
                 "§9§lBlue",
                 "§9Captures | " + blueCaps + "/" + capsToWin,
-                "§9Flag Status | " + (ParallelCTF.gameManager.isBlueFlagTaken() ? "Held by " + ParallelCTF.gameManager.getBlueFlagCarrier().getMcPlayer().getName() : "Home")
+                flagLines[2],
+                flagLines[3]
         );
     }
 

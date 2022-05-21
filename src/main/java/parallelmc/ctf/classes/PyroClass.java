@@ -47,9 +47,6 @@ public class PyroClass extends CTFClass {
         bmeta.lore(lore);
         bmeta.setUnbreakable(true);
         bow.setItemMeta(bmeta);
-        this.effects = new PotionEffect[] {
-                new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0, true)
-        };
         this.hotbar = new ItemStack[] {
                 axe,
                 food,

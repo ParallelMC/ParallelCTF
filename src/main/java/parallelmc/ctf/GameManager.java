@@ -2,6 +2,7 @@ package parallelmc.ctf;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -10,12 +11,15 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.Nullable;
 import parallelmc.ctf.classes.DwarfClass;
 import parallelmc.ctf.classes.NinjaClass;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 
 public class GameManager {
@@ -53,8 +57,8 @@ public class GameManager {
         }
         if (redPlayers > bluePlayers) {
             players.put(player, new CTFPlayer(player, CTFTeam.BLUE));
-            player.customName(Component.text(player.getName(), NamedTextColor.BLUE));
             player.playerListName(Component.text(player.getName(), NamedTextColor.BLUE));
+            player.displayName(Component.text(player.getName(), NamedTextColor.BLUE));
             ParallelCTF.sendMessageTo(player, "Joined §9Blue team!");
             bluePlayers++;
             if (gameState == GameState.PLAY) {
@@ -63,8 +67,8 @@ public class GameManager {
         }
         else { // secretly favor red to make things easier
             players.put(player, new CTFPlayer(player, CTFTeam.RED));
-            player.customName(Component.text(player.getName(), NamedTextColor.RED));
             player.playerListName(Component.text(player.getName(), NamedTextColor.RED));
+            player.displayName(Component.text(player.getName(), NamedTextColor.RED));
             ParallelCTF.sendMessageTo(player, "Joined §cRed team!");
             redPlayers++;
             if (gameState == GameState.PLAY) {
@@ -75,7 +79,7 @@ public class GameManager {
 
     /***
      * Removes a player from the game. The teams are currently NOT auto balanced when a player leaves
-     * @param player
+     * @param player The player to remove
      */
     public void removePlayer(Player player) {
         CTFPlayer pl = getPlayer(player);
@@ -86,6 +90,12 @@ public class GameManager {
         }
         pl.deleteBoard();
         players.remove(player);
+        if (bluePlayers > redPlayers + 1) {
+            ParallelCTF.sendMessage("A slot is available on the §cRed Team! §aType /team red to join!");
+        }
+        if (redPlayers > bluePlayers + 1) {
+            ParallelCTF.sendMessage("A slot is available on the §9Blue Team! §aType /team blue to join!");
+        }
     }
 
     /***
@@ -107,10 +117,14 @@ public class GameManager {
         if (newTeam == CTFTeam.RED) {
             bluePlayers--;
             redPlayers++;
+            player.playerListName(Component.text(player.getName(), NamedTextColor.RED));
+            player.displayName(Component.text(player.getName(), NamedTextColor.RED));
         }
         else {
             redPlayers--;
             bluePlayers++;
+            player.playerListName(Component.text(player.getName(), NamedTextColor.BLUE));
+            player.displayName(Component.text(player.getName(), NamedTextColor.BLUE));
         }
         pl.setTeam(newTeam);
     }
@@ -195,8 +209,15 @@ public class GameManager {
         this.plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             int mins = secondsLeft / 60;
             int secs = secondsLeft % 60;
+            boolean redNl = redFlagTaken && (redFlagCarrier.getMcPlayer().getName().length() > 10);
+            boolean blueNl = blueFlagTaken && (blueFlagCarrier.getMcPlayer().getName().length() > 10);
+            List<String> flagLines = List.of("§cFlag Status | " + (ParallelCTF.gameManager.isRedFlagTaken() ? "Held by " + (redNl ? "" : ParallelCTF.gameManager.getRedFlagCarrier().getMcPlayer().getName()) : "Home"),
+                    (redNl ? ParallelCTF.gameManager.getRedFlagCarrier().getMcPlayer().getName() : ""),
+                    "§9Flag Status | " + (ParallelCTF.gameManager.isBlueFlagTaken() ? "Held by " + (blueNl ? "" : ParallelCTF.gameManager.getBlueFlagCarrier().getMcPlayer().getName()) : "Home"),
+                    (blueNl ? ParallelCTF.gameManager.getBlueFlagCarrier().getMcPlayer().getName() : ""));
             players.forEach((p, c) -> {
-                c.updateBoard(mins, secs, capturesToWin, redCaptures, blueCaptures);
+                // java wizardry but prevents having to run the above for every player
+                c.updateBoard(mins, secs, capturesToWin, redCaptures, blueCaptures, flagLines.toArray(String[]::new));
             });
             secondsLeft--;
             if (secondsLeft <= 0) {
@@ -217,12 +238,11 @@ public class GameManager {
             players.forEach((p, c) -> {
                 if (c.getCtfClass() instanceof NinjaClass ninja && redFlagCarrier != c && blueFlagCarrier != c) {
                     if (p.getInventory().getItemInMainHand().getType() == Material.REDSTONE) {
-                        if (!ninja.isInvisible()) {
-                            ninja.goInvisibleTo(p, c.getTeam() == CTFTeam.RED ? CTFTeam.BLUE : CTFTeam.RED);
-                        }
+                        if (!ninja.isInvisible())
+                            ninja.goInvisibleTo(p, c.getTeam() == CTFTeam.BLUE ? CTFTeam.RED : CTFTeam.BLUE);
                     }
                     else if (ninja.isInvisible()) {
-                        ninja.goVisibleTo(p, c.getTeam() == CTFTeam.RED ? CTFTeam.BLUE : CTFTeam.RED);
+                        ninja.goVisibleTo(p, c.getTeam() == CTFTeam.BLUE ? CTFTeam.RED : CTFTeam.BLUE);
                     }
                 }
                 // dwarfs intentionally cannot sprint, so dont update their food bar
