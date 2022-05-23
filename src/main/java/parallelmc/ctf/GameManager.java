@@ -142,6 +142,8 @@ public class GameManager {
             player.setAllowFlight(false);
             player.removePotionEffect(PotionEffectType.INVISIBILITY);
         }
+        if (gameState == GameState.PLAY)
+            pl.kill();
         pl.setTeam(newTeam);
     }
 

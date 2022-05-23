@@ -5,6 +5,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import parallelmc.ctf.CTFPlayer;
 import parallelmc.ctf.CTFTeam;
 import parallelmc.ctf.ParallelCTF;
 
@@ -14,6 +15,19 @@ public class ChangeTeam implements CommandExecutor {
         if (commandSender instanceof Player player) {
             if (args.length < 1) {
                 return false;
+            }
+            CTFPlayer pl = ParallelCTF.gameManager.getPlayer(player);
+            if (ParallelCTF.gameManager.isRedFlagTaken()) {
+                if (ParallelCTF.gameManager.getRedFlagCarrier() == pl) {
+                    ParallelCTF.sendMessageTo(player, "You cannot change teams while holding the flag!");
+                    return true;
+                }
+            }
+            if (ParallelCTF.gameManager.isBlueFlagTaken()) {
+                if (ParallelCTF.gameManager.getBlueFlagCarrier() == pl) {
+                    ParallelCTF.sendMessageTo(player, "You cannot change teams while holding the flag!");
+                    return true;
+                }
             }
             if ("red".equalsIgnoreCase(args[0])) {
                 if (ParallelCTF.gameManager.getTeamDisparity() != -1) {
