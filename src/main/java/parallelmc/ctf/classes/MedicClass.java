@@ -3,6 +3,7 @@ package parallelmc.ctf.classes;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 
 
 public class MedicClass extends CTFClass {
+    public ArrayList<Block> placedWebs = new ArrayList<>();
     public MedicClass(Player player) {
         super(player);
         this.name = "Medic";
@@ -39,10 +41,14 @@ public class MedicClass extends CTFClass {
         meta.displayName(Component.text("§fMedic Sword"));
         lore.clear();
         lore.add(Component.text("Hit allies to heal them!", NamedTextColor.GRAY));
+        meta.lore(lore);
         sword.setItemMeta(meta);
         ItemStack snowball = new ItemStack(Material.SNOWBALL,3);
         ItemMeta smeta = snowball.getItemMeta();
         smeta.displayName(Component.text("§fWeb Ball"));
+        lore.clear();
+        lore.add(Component.text("Throw these at the ground to spawn cobwebs!", NamedTextColor.GRAY));
+        snowball.lore(lore);
         snowball.setItemMeta(smeta);
         this.hotbar = new ItemStack[] {
                 sword,

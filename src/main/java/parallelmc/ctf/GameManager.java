@@ -2,7 +2,6 @@ package parallelmc.ctf;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -11,14 +10,15 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 import parallelmc.ctf.classes.DwarfClass;
 import parallelmc.ctf.classes.NinjaClass;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -37,6 +37,7 @@ public class GameManager {
     private final int capturesToWin;
     public GameState gameState;
     public CTFMap ctfMap;
+    public HashSet<Player> voteStart = new HashSet<>();
     public HashMap<Player, CTFPlayer> players = new HashMap<>();
     public HashMap<Entity, ArrowShot> shotArrows = new HashMap<>();
 
@@ -114,7 +115,17 @@ public class GameManager {
      */
     public void changeTeam(Player player, CTFTeam newTeam) {
         CTFPlayer pl = players.get(player);
-        if (newTeam == CTFTeam.RED) {
+        if (newTeam == CTFTeam.SPECTATOR) {
+            if (pl.getTeam() == CTFTeam.RED)
+                redPlayers--;
+            else if (pl.getTeam() == CTFTeam.BLUE)
+                bluePlayers--;
+            player.playerListName(Component.text(player.getName(), NamedTextColor.GRAY));
+            player.displayName(Component.text(player.getName(), NamedTextColor.GRAY));
+            player.setAllowFlight(true);
+            pl.setClass("Spectator");
+        }
+        else if (newTeam == CTFTeam.RED) {
             bluePlayers--;
             redPlayers++;
             player.playerListName(Component.text(player.getName(), NamedTextColor.RED));
@@ -125,6 +136,11 @@ public class GameManager {
             bluePlayers++;
             player.playerListName(Component.text(player.getName(), NamedTextColor.BLUE));
             player.displayName(Component.text(player.getName(), NamedTextColor.BLUE));
+        }
+        // if they used to be a spectator disallow flight and reveal to all players
+        if (pl.getTeam() == CTFTeam.SPECTATOR) {
+            player.setAllowFlight(false);
+            player.removePotionEffect(PotionEffectType.INVISIBILITY);
         }
         pl.setTeam(newTeam);
     }
@@ -169,6 +185,7 @@ public class GameManager {
             if (cp.getTeam() == CTFTeam.BLUE) {
                 p.teleport(ctfMap.blueSpawnPos);
             } else {
+                // teleport spectators to red team's spawn too cause why not
                 p.teleport(ctfMap.redSpawnPos);
             }
         });
@@ -199,6 +216,7 @@ public class GameManager {
             this.plugin.getServer().getScheduler().cancelTasks(plugin);
         });
         gameState = GameState.PREGAME;
+
     }
 
     /***

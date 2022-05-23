@@ -3,8 +3,7 @@ package parallelmc.ctf;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -20,7 +19,7 @@ public class ParallelCTF extends JavaPlugin {
     public static Level LOG_LEVEL = Level.INFO;
     public static final HashMap<String, Class<? extends CTFClass>> classes = new HashMap<>();
     public static GameManager gameManager;
-    public static final BossBar alphaBossBar = BossBar.bossBar(Component.text("ParallelCTF v1.0 Alpha Gameplay", NamedTextColor.YELLOW), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
+    public static final BossBar alphaBossBar = BossBar.bossBar(Component.text("ParallelCTF v1.2 Alpha Gameplay", NamedTextColor.YELLOW), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
 
     @Override
     public void onLoad() {
@@ -32,6 +31,7 @@ public class ParallelCTF extends JavaPlugin {
         classes.put("Pyro", PyroClass.class);
         classes.put("Soldier", SoldierClass.class);
         classes.put("Tank", TankClass.class);
+        classes.put("Spectator", SpectatorClass.class);
     }
 
     @Override
@@ -44,6 +44,8 @@ public class ParallelCTF extends JavaPlugin {
         manager.registerEvents(new OnDropItem(), this);
         manager.registerEvents(new OnBlockBreak(), this);
         manager.registerEvents(new OnPlaceBlock(), this);
+        manager.registerEvents(new OnFireSpread(), this);
+        manager.registerEvents(new OnBlockBurn(), this);
         manager.registerEvents(new OnDamage(), this);
         manager.registerEvents(new OnDamageEntity(), this);
         manager.registerEvents(new OnBowShoot(), this);
@@ -56,7 +58,10 @@ public class ParallelCTF extends JavaPlugin {
         manager.registerEvents(new OnChat(), this);
         this.getCommand("startgame").setExecutor(new StartGame());
         this.getCommand("endgame").setExecutor(new EndGame());
+        this.getCommand("votestart").setExecutor(new VoteStart());
+        this.getCommand("shuffleteams").setExecutor(new ShuffleTeams());
         this.getCommand("debug").setExecutor(new Debug());
+        this.getCommand("info").setExecutor(new ClassInfo());
         this.getCommand("team").setExecutor(new ChangeTeam());
         this.getCommand("forceteam").setExecutor(new ForceTeam());
         this.getCommand("classes").setExecutor(new Classes());
@@ -70,11 +75,23 @@ public class ParallelCTF extends JavaPlugin {
         this.getCommand("dwarf").setExecutor(new Dwarf());
 
         // load config
+        World world = this.getServer().getWorld("world-ctf");
+        if (world == null) {
+            ParallelCTF.log(Level.SEVERE, "Could not find world world-ctf! Exiting startup...");
+            return;
+        }
         FileConfiguration config = this.getConfig();
         gameManager = new GameManager(this,
-                new Location(this.getServer().getWorld("world-ctf"), config.getDouble("pregame.x"), config.getDouble("pregame.y"), config.getDouble("pregame.z")),
+                new Location(world, config.getDouble("pregame.x"), config.getDouble("pregame.y"), config.getDouble("pregame.z")),
                 config.getInt("win_captures"));
         gameManager.loadMap();
+
+        // setup important gamerules
+        world.setGameRule(GameRule.DO_FIRE_TICK, true);
+        world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
+        world.setGameRule(GameRule.DO_TILE_DROPS, false);
+        world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
+
     }
 
     @Override

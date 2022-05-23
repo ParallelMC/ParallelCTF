@@ -41,12 +41,15 @@ public class OnDamageEntity implements Listener {
                     ParallelCTF.sendMessageTo(victim, "You were healed by " + attacker.getName() + "! You can be healed again in 15 seconds.");
                     ParallelCTF.sendMessageTo(attacker, "You healed " + victim.getName() + "! They can be healed again in 15 seconds.");
                 }
+                else {
+                    event.setCancelled(true);
+                }
             }
             else {
                 if (pla.getCtfClass() instanceof PyroClass) {
                     if (attacker.getInventory().getItemInMainHand().getType() == Material.DIAMOND_AXE) {
                         if (victim.getFireTicks() > 0) {
-                            ParallelCTF.sendMessage((plv.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + victim.getName() + " was axed by " + (pla.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + attacker.getName());
+                            ParallelCTF.sendMessage(plv.getColorFormatting() + victim.getName() + " §awas axed by " + pla.getColorFormatting() + attacker.getName());
                             event.setCancelled(true);
                             plv.kill();
                         }
@@ -62,13 +65,13 @@ public class OnDamageEntity implements Listener {
                 if (plv.getCtfClass() instanceof AssassinClass assassin) {
                     if (assassin.isAssassinating()) {
                         // assassins can be instakilled while assassinating
-                        ParallelCTF.sendMessage((plv.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + victim.getName() + " was assassinated by " + (pla.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + attacker.getName());
+                        ParallelCTF.sendMessage(plv.getColorFormatting() + victim.getName() + " §awas assassinated by " + pla.getColorFormatting() + attacker.getName());
                         event.setCancelled(true);
                         plv.kill();
                     }
                 }
                 if (victim.getHealth() - event.getDamage() <= 0D) {
-                    ParallelCTF.sendMessage((plv.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + victim.getName() + " was slain by " + (pla.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + attacker.getName());
+                    ParallelCTF.sendMessage(plv.getColorFormatting() + victim.getName() + " §awas slain by " + pla.getColorFormatting() + attacker.getName());
                     event.setCancelled(true);
                     plv.kill();
                 }

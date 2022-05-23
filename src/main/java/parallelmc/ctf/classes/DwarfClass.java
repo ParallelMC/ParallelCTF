@@ -39,6 +39,7 @@ public class DwarfClass extends CTFClass {
         meta.displayName(Component.text("§fDwarf Sword"));
         lore.clear();
         lore.add(Component.text("Sneak and hold to gain enchantments!"));
+        sword.lore(lore);
         sword.setItemMeta(meta);
         this.hotbar = new ItemStack[] {
                 sword,

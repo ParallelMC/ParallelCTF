@@ -37,6 +37,7 @@ public class SoldierClass extends CTFClass {
         lore.clear();
         lore.add(Component.text("Right-click to climb walls!", NamedTextColor.GRAY));
         meta.displayName(Component.text("§fWall Climbing Sword"));
+        sword.lore(lore);
         sword.setItemMeta(meta);
         this.hotbar = new ItemStack[] {
                 sword,

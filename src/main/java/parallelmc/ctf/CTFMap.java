@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
@@ -75,12 +74,12 @@ public class CTFMap {
      * @param p The player to check
      * @return If the player is in their spawn
      */
-    public boolean isPlayerInSpawn(CTFPlayer p) {
+    public boolean isPlayerNotInSpawn(CTFPlayer p) {
         if (p.getTeam() == CTFTeam.BLUE) {
-            return world.getNearbyEntities(blueBB).contains(p.getMcPlayer());
+            return !world.getNearbyEntities(blueBB).contains(p.getMcPlayer());
         }
         else {
-            return world.getNearbyEntities(redBB).contains(p.getMcPlayer());
+            return !world.getNearbyEntities(redBB).contains(p.getMcPlayer());
         }
     }
 

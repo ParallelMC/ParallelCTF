@@ -19,7 +19,7 @@ public class Soldier implements CommandExecutor {
             }
             CTFPlayer pl = ParallelCTF.gameManager.getPlayer(player);
             pl.setClass("Soldier");
-            if (!ParallelCTF.gameManager.ctfMap.isPlayerInSpawn(pl)) {
+            if (ParallelCTF.gameManager.ctfMap.isPlayerNotInSpawn(pl)) {
                 pl.kill();
             }
             ParallelCTF.sendMessageTo(player, "Equipped the Soldier class!");

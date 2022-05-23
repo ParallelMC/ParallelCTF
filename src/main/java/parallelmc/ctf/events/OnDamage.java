@@ -44,7 +44,7 @@ public class OnDamage implements Listener {
                     cause != EntityDamageEvent.DamageCause.PROJECTILE &&
                     player.getHealth() - event.getDamage() <= 0D) {
                 event.setCancelled(true);
-                ParallelCTF.sendMessage((pl.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + player.getName() + " died to " + event.getCause());
+                ParallelCTF.sendMessage(pl.getColorFormatting() + player.getName() + " §adied to " + event.getCause());
                 pl.kill();
             }
         }

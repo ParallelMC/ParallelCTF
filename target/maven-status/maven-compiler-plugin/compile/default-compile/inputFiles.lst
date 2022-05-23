@@ -15,6 +15,7 @@ C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\classes\Tan
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\commands\Debug.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\events\OnProjectileThrown.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\ParallelCTF.java
+C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\events\OnBlockBreak.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\events\OnChangeHeldItem.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\events\OnDamageEntity.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\events\OnTeleport.java
@@ -23,6 +24,7 @@ C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\events\OnPr
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\events\OnInventoryClick.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\fr\mrmicky\fastboard\FastReflection.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\commands\Tank.java
+C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\events\OnChat.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\classes\PyroClass.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\commands\EndGame.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\classes\AssassinClass.java
@@ -42,4 +44,5 @@ C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\commands\Dw
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\GameState.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\events\OnPlayerLeave.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\commands\Soldier.java
+C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\events\OnPlaceBlock.java
 C:\Users\Ethan\IdeaProjects\ParallelCTF\src\main\java\parallelmc\ctf\CTFPlayer.java

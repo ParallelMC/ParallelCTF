@@ -1,11 +1,14 @@
 fr\mrmicky\fastboard\FastBoard$ObjectiveMode.class
 parallelmc\ctf\commands\Soldier.class
+parallelmc\ctf\commands\VoteStart.class
 parallelmc\ctf\commands\Dwarf.class
+parallelmc\ctf\CTFPlayer$1.class
 parallelmc\ctf\events\OnChangeHeldItem.class
 parallelmc\ctf\commands\Medic.class
 parallelmc\ctf\classes\SoldierClass.class
 parallelmc\ctf\GameState.class
 parallelmc\ctf\classes\MedicClass.class
+parallelmc\ctf\commands\ClassInfo.class
 fr\mrmicky\fastboard\FastBoard$TeamMode.class
 parallelmc\ctf\commands\Classes.class
 parallelmc\ctf\events\OnCreatureSpawn.class
@@ -27,8 +30,10 @@ parallelmc\ctf\commands\ChangeTeam.class
 parallelmc\ctf\classes\NinjaClass.class
 parallelmc\ctf\events\OnTeleport.class
 parallelmc\ctf\CTFTeam.class
+parallelmc\ctf\events\OnFireSpread.class
 parallelmc\ctf\events\OnInventoryClick.class
 fr\mrmicky\fastboard\FastBoard.class
+parallelmc\ctf\commands\ShuffleTeams.class
 parallelmc\ctf\commands\ForceTeam.class
 parallelmc\ctf\classes\ArcherClass.class
 parallelmc\ctf\commands\Pyro.class
@@ -47,9 +52,11 @@ parallelmc\ctf\events\OnBowShoot.class
 parallelmc\ctf\commands\Ninja.class
 parallelmc\ctf\events\OnDamage.class
 fr\mrmicky\fastboard\FastBoard$VersionType.class
+parallelmc\ctf\events\OnBlockBurn.class
 parallelmc\ctf\CTFMap.class
 parallelmc\ctf\classes\DwarfClass.class
 parallelmc\ctf\events\OnProjectileHit.class
+parallelmc\ctf\classes\SpectatorClass.class
 parallelmc\ctf\commands\StartGame.class
 parallelmc\ctf\events\OnPlaceBlock.class
 parallelmc\ctf\events\OnPlayerJoin.class

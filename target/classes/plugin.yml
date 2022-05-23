@@ -1,5 +1,5 @@
 name: "ParallelCTF"
-version: "1.0.0"
+version: "1.1.0"
 main: parallelmc.ctf.ParallelCTF
 api-version: 1.18
 author: EBro912
@@ -17,16 +17,26 @@ commands:
     description: Forces the game to end
     usage: /endgame
     default: op
+  votestart:
+    description: Vote to start the game
+    usage: /votestart
   team:
     description: Change your team
-    usage: /team <red/blue>
+    usage: /team <red/blue/spectator>
   forceteam:
     description: Forces a player to join a team
-    usage: /forceteam <player> <red/blue>
+    usage: /forceteam <player> <red/blue/spectator>
+    default: op
+  shuffleteams:
+    description: Shuffles the teams
+    usage: /shuffleteams
     default: op
   classes:
     description: Shows all CTF classes
     usage: /classes
+  info:
+    description: Shows info about a class
+    usage: /info <class>
   tank:
     description: Equips the Tank class
     usage: /tank

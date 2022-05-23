@@ -13,7 +13,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import parallelmc.ctf.ArrowShot;
 import parallelmc.ctf.CTFPlayer;
-import parallelmc.ctf.CTFTeam;
 import parallelmc.ctf.ParallelCTF;
 import parallelmc.ctf.classes.*;
 
@@ -29,7 +28,7 @@ public class OnProjectileHit implements Listener {
         if (hitEntity instanceof Player hitPlayer) {
             if (projectile instanceof Arrow arrow) {
                 ArrowShot shot = ParallelCTF.gameManager.getShot(projectile);
-                CTFPlayer hpl= ParallelCTF.gameManager.getPlayer(hitPlayer);
+                CTFPlayer hpl = ParallelCTF.gameManager.getPlayer(hitPlayer);
                 if (shot != null) {
                     CTFPlayer pl = ParallelCTF.gameManager.getPlayer(shot.shooter());
                     if (pl.getCtfClass() instanceof ArcherClass) {
@@ -39,7 +38,7 @@ public class OnProjectileHit implements Listener {
                             hpl.kill();
                             ParallelCTF.sendMessageTo(hitPlayer, "You were sniped by " + shot.shooter().getName() + " from " + Math.round(dist) + " blocks away!");
                             ParallelCTF.sendMessageTo(shot.shooter(), "You sniped " + hitPlayer.getName() + " from " + Math.round(dist) + " blocks away!");
-                            ParallelCTF.sendMessage((hpl.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + hitPlayer.getName() + " was sniped by " + shot.shooter().getName());
+                            ParallelCTF.sendMessage((hpl.getColorFormatting() + hitPlayer.getName() + " §awas sniped by " + pl.getColorFormatting() + shot.shooter().getName()));
                         }
                     }
                     // remove the shot either way
@@ -48,8 +47,10 @@ public class OnProjectileHit implements Listener {
 
                 }
                 if (hitPlayer.getHealth() - arrow.getDamage() <= 0D) {
+                    CTFPlayer pl = ParallelCTF.gameManager.getPlayer((Player)arrow.getShooter());
+                    event.setCancelled(true);
                     hpl.kill();
-                    ParallelCTF.sendMessage((hpl.getTeam() == CTFTeam.BLUE ? "§9" : "§c") + hitPlayer.getName() + " was shot by " + ((Player)arrow.getShooter()).getName());
+                    ParallelCTF.sendMessage(hpl.getColorFormatting() + hitPlayer.getName() + " §awas shot by " + pl.getColorFormatting() + pl.getMcPlayer().getName());
                 }
             }
             else if (projectile instanceof Egg) {
@@ -98,8 +99,14 @@ public class OnProjectileHit implements Listener {
             else if (projectile instanceof Snowball) {
                 BlockFace hitFace = event.getHitBlockFace();
                 if (hitFace != null && hitFace.isCartesian()) {
-                    Block next = hitBlock.getRelative(hitFace);
-                    next.setType(Material.COBWEB);
+                    // cast-o-rama
+                    CTFPlayer pl = ParallelCTF.gameManager.getPlayer((Player)((Snowball) projectile).getShooter());
+                    if (pl.getCtfClass() instanceof MedicClass medic) {
+                        Block next = hitBlock.getRelative(hitFace);
+                        next.setType(Material.COBWEB);
+                        medic.placedWebs.add(next);
+                    }
+
                 }
             }
             else if (projectile instanceof Egg) {

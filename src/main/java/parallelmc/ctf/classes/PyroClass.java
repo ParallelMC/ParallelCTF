@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -47,12 +48,16 @@ public class PyroClass extends CTFClass {
         bmeta.lore(lore);
         bmeta.setUnbreakable(true);
         bow.setItemMeta(bmeta);
+        ItemStack flint = new ItemStack(Material.FLINT_AND_STEEL);
+        Damageable fmeta = (Damageable)flint.getItemMeta();
+        fmeta.setDamage(48);
+        flint.setItemMeta(fmeta);
         this.hotbar = new ItemStack[] {
                 axe,
                 food,
                 bow,
                 new ItemStack(Material.ARROW, 25),
-                new ItemStack(Material.FLINT_AND_STEEL)
+                flint
         };
     }
 }

@@ -3,11 +3,13 @@ package parallelmc.ctf;
 import fr.mrmicky.fastboard.FastBoard;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 import parallelmc.ctf.classes.CTFClass;
+import parallelmc.ctf.classes.MedicClass;
 import parallelmc.ctf.classes.NinjaClass;
 
 import java.util.logging.Level;
@@ -126,6 +128,10 @@ public class CTFPlayer {
         if (this.ctfClass instanceof NinjaClass ninja) {
             ninja.thrownPearls.forEach(Entity::remove);
         }
+        // medic cobwebs are removed on death
+        if (this.ctfClass instanceof MedicClass medic) {
+            medic.placedWebs.forEach(x -> x.setType(Material.AIR));
+        }
         if (ParallelCTF.gameManager.getBlueFlagCarrier() == this) {
             ParallelCTF.gameManager.ctfMap.resetBlueFlag();
             ParallelCTF.sendMessage("§9Blue's Flag §ahas been reset!");
@@ -146,5 +152,13 @@ public class CTFPlayer {
     public CTFTeam getTeam() { return this.team; }
 
     public CTFClass getCtfClass() { return this.ctfClass; }
+
+    public String getColorFormatting() {
+        return switch (this.team) {
+            case RED -> "§c";
+            case BLUE -> "§9";
+            case SPECTATOR -> "§7";
+        };
+    }
 
 }

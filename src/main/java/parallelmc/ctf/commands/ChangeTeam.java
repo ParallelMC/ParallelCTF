@@ -31,6 +31,10 @@ public class ChangeTeam implements CommandExecutor {
                 ParallelCTF.gameManager.changeTeam(player, CTFTeam.BLUE);
                 ParallelCTF.sendMessageTo(player, "Joined §9Blue team!");
             }
+            else if ("spectator".equalsIgnoreCase(args[0])) {
+                ParallelCTF.gameManager.changeTeam(player, CTFTeam.SPECTATOR);
+                ParallelCTF.sendMessageTo(player, "Joined §7Spectators!");
+            }
             else {
                 ParallelCTF.sendMessageTo(player, "Unknown team " + args[0]);
                 return true;

@@ -35,7 +35,9 @@ public class OnRightClick implements Listener {
         if (pl.getCtfClass() instanceof SoldierClass soldier &&
                 heldItem.getType() == Material.IRON_SWORD &&
                 !soldier.isWallClimbOnCooldown() &&
-                action == Action.RIGHT_CLICK_BLOCK) {
+                action == Action.RIGHT_CLICK_BLOCK &&
+                event.getClickedBlock() != null &&
+                event.getClickedBlock().getType() != Material.BARRIER) {
             player.setVelocity(new Vector(0, 0.6, 0));
             soldier.setWallClimbOnCooldown();
         }
