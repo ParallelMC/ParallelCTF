@@ -19,9 +19,11 @@ public class CTFClass {
 
     public void giveClass() {
         player.getInventory().clear();
-        player.setExp(0);
-        player.setLevel(0);
-        player.setFoodLevel(37);
+        if (!(this instanceof DwarfClass)) {
+            player.setExp(0);
+            player.setLevel(0);
+            player.setFoodLevel(37);
+        }
         PlayerInventory inv = player.getInventory();
         for (ItemStack i : hotbar) {
             inv.addItem(i);

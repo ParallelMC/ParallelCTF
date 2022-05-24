@@ -118,7 +118,10 @@ public class CTFPlayer {
         else {
             player.teleport(ParallelCTF.gameManager.ctfMap.redSpawnPos);
         }
-        player.setFireTicks(0);
+        // apparently this needs to be run a tick later
+        Bukkit.getScheduler().runTask(ParallelCTF.gameManager.getPlugin(), () -> {
+            player.setFireTicks(0);
+        });
         player.setFallDistance(0);
         player.setHealth(20D);
         ctfClass.giveClass();

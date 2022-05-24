@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 
@@ -59,7 +60,19 @@ public class MedicClass extends CTFClass {
                 new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0, true),
                 new PotionEffect(PotionEffectType.WATER_BREATHING, Integer.MAX_VALUE, 0, true)
         };
-        // TODO: possibly passive healing
-        this.runnable = null;
+        initRunnable();
+        this.runnableTicks = 60L;
+    }
+
+    public void initRunnable() {
+        this.runnable = new BukkitRunnable() {
+            @Override
+            public void run() {
+                // medics heal a half heart every 3 seconds
+                if (!player.isDead() && player.getHealth() < 20D) {
+                    player.setHealth(player.getHealth() + 0.5D);
+                }
+            }
+        };
     }
 }

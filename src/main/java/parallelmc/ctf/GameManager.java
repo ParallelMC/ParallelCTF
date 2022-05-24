@@ -91,6 +91,10 @@ public class GameManager {
         }
         pl.deleteBoard();
         players.remove(player);
+        if (redPlayers == 0 && bluePlayers == 0) {
+            decideWinner();
+            return;
+        }
         if (bluePlayers > redPlayers + 1) {
             ParallelCTF.sendMessage("A slot is available on the §cRed Team! §aType /team red to join!");
         }
@@ -225,6 +229,32 @@ public class GameManager {
      * The main game loop, which handles most game logic
      */
     private void startGameLoop() {
+        // flag damage loop
+        // flag carriers are hurt 1.5 hearts every 15 seconds
+        this.plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+            if (redFlagTaken) {
+                Player p = redFlagCarrier.getMcPlayer();
+                if (p.getHealth() - 1.5D <= 0D) {
+                    ParallelCTF.sendMessage(redFlagCarrier.getColorFormatting() + p.getName() + " §awas killed by §9Blue's Flag!");
+                    redFlagCarrier.kill();
+                }
+                else {
+                    p.damage(1.5D);
+                    ParallelCTF.sendMessageTo(p, "You were damaged by §9Blue's Flag!");
+                }
+            }
+            if (blueFlagTaken) {
+                Player p = blueFlagCarrier.getMcPlayer();
+                if (p.getHealth() - 1.5D <= 0D) {
+                    ParallelCTF.sendMessage(blueFlagCarrier.getColorFormatting() + p.getName() + " §awas killed by §cRed's Flag!");
+                    blueFlagCarrier.kill();
+                }
+                else {
+                    p.damage(1.5D);
+                    ParallelCTF.sendMessageTo(p, "You were damaged by §cRed's Flag!");
+                }
+            }
+        }, 0L, 300L);
         // time loop
         this.plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             int mins = secondsLeft / 60;
