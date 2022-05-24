@@ -22,7 +22,7 @@ public class VoteStart implements CommandExecutor {
                     return true;
                 }
                 ParallelCTF.gameManager.voteStart.add(player);
-                ParallelCTF.sendMessage(player.getName() + "has voted the start the game. (" +
+                ParallelCTF.sendMessage(player.getName() + " has voted the start the game. (" +
                         ParallelCTF.gameManager.voteStart.size() + "/" + (ParallelCTF.gameManager.players.size() - 1) + " votes needed)");
                 if (ParallelCTF.gameManager.voteStart.size() >= ParallelCTF.gameManager.players.size() - 1) {
                     ParallelCTF.gameManager.voteStart.clear();

@@ -5,13 +5,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 import parallelmc.ctf.CTFPlayer;
 import parallelmc.ctf.CTFTeam;
 import parallelmc.ctf.GameState;
 import parallelmc.ctf.ParallelCTF;
 import parallelmc.ctf.classes.AssassinClass;
+import parallelmc.ctf.classes.DwarfClass;
 import parallelmc.ctf.classes.MedicClass;
 import parallelmc.ctf.classes.PyroClass;
 
@@ -69,6 +72,13 @@ public class OnDamageEntity implements Listener {
                         event.setCancelled(true);
                         plv.kill();
                     }
+                }
+                if (plv.getCtfClass() instanceof DwarfClass) {
+                    // dwarves dont take knockback
+                    Plugin plugin = ParallelCTF.gameManager.getPlugin();
+                    plugin.getServer().getScheduler().runTask(plugin, () -> {
+                        plv.getMcPlayer().setVelocity(new Vector(0, 0, 0));
+                    });
                 }
                 if (victim.getHealth() - event.getDamage() <= 0D) {
                     ParallelCTF.sendMessage(plv.getColorFormatting() + victim.getName() + " §awas slain by " + pla.getColorFormatting() + attacker.getName());

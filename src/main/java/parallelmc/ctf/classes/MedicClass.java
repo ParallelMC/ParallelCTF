@@ -2,8 +2,8 @@ package parallelmc.ctf.classes;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -11,12 +11,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import parallelmc.ctf.ParallelCTF;
 
 import java.util.ArrayList;
 
 
 public class MedicClass extends CTFClass {
-    public ArrayList<Block> placedWebs = new ArrayList<>();
+    public ArrayList<Location> placedWebs = new ArrayList<>();
     public MedicClass(Player player) {
         super(player);
         this.name = "Medic";
@@ -69,7 +70,7 @@ public class MedicClass extends CTFClass {
             @Override
             public void run() {
                 // medics heal a half heart every 3 seconds
-                if (!player.isDead() && player.getHealth() < 20D) {
+                if (!player.isDead() && player.getHealth() < 20D && ParallelCTF.gameManager.isPlayerNotFlagCarrier(player)) {
                     player.setHealth(player.getHealth() + 0.5D);
                 }
             }

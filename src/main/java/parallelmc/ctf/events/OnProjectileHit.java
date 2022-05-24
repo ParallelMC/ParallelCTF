@@ -26,11 +26,15 @@ public class OnProjectileHit implements Listener {
         Block hitBlock = event.getHitBlock();
         Entity projectile = event.getEntity();
         if (hitEntity instanceof Player hitPlayer) {
+            CTFPlayer hpl = ParallelCTF.gameManager.getPlayer(hitPlayer);
             if (projectile instanceof Arrow arrow) {
                 ArrowShot shot = ParallelCTF.gameManager.getShot(projectile);
-                CTFPlayer hpl = ParallelCTF.gameManager.getPlayer(hitPlayer);
                 if (shot != null) {
                     CTFPlayer pl = ParallelCTF.gameManager.getPlayer(shot.shooter());
+                    if (pl.getTeam() == hpl.getTeam()) {
+                        event.setCancelled(true);
+                        return;
+                    }
                     if (pl.getCtfClass() instanceof ArcherClass) {
                         // arrow 30+ blocks away is snipe
                         double dist = shot.shotLocation().distance(hitEntity.getLocation());
@@ -43,17 +47,25 @@ public class OnProjectileHit implements Listener {
                     }
                     // remove the shot either way
                     ParallelCTF.gameManager.removeShot(projectile);
-                    projectile.remove();
-
+                }
+                projectile.remove();
+                CTFPlayer pl = ParallelCTF.gameManager.getPlayer((Player)arrow.getShooter());
+                if (hpl.getTeam() == pl.getTeam()) {
+                    event.setCancelled(true);
+                    return;
                 }
                 if (hitPlayer.getHealth() - arrow.getDamage() <= 0D) {
-                    CTFPlayer pl = ParallelCTF.gameManager.getPlayer((Player)arrow.getShooter());
                     event.setCancelled(true);
                     hpl.kill();
                     ParallelCTF.sendMessage(hpl.getColorFormatting() + hitPlayer.getName() + " §awas shot by " + pl.getColorFormatting() + pl.getMcPlayer().getName());
                 }
             }
-            else if (projectile instanceof Egg) {
+            else if (projectile instanceof Egg egg) {
+                CTFPlayer pl = ParallelCTF.gameManager.getPlayer((Player)egg.getShooter());
+                if (hpl.getTeam() == pl.getTeam()) {
+                    event.setCancelled(true);
+                    return;
+                }
                 hitPlayer.getWorld().playSound(hitEntity.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1f, 1f);
                 hitPlayer.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, hitPlayer.getLocation(), 1);
                 ArrayList<PotionEffect> effects = new ArrayList<>();
@@ -104,7 +116,7 @@ public class OnProjectileHit implements Listener {
                     if (pl.getCtfClass() instanceof MedicClass medic) {
                         Block next = hitBlock.getRelative(hitFace);
                         next.setType(Material.COBWEB);
-                        medic.placedWebs.add(next);
+                        medic.placedWebs.add(next.getLocation());
                     }
 
                 }

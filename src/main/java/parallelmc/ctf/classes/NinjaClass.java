@@ -37,7 +37,7 @@ public class NinjaClass extends CTFClass {
         ItemStack sword = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = sword.getItemMeta();
         meta.setUnbreakable(true);
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 6, true);
+        meta.addEnchant(Enchantment.DAMAGE_ALL, 5, true);
         meta.displayName(Component.text("§fNinja Sword"));
         ArrayList<Component> lore = new ArrayList<>();
         lore.add(Component.text("Sneak to slowly regain health!", NamedTextColor.GRAY));
@@ -86,7 +86,8 @@ public class NinjaClass extends CTFClass {
                     }
                 }
                 else if (player.isSneaking()) {
-                    if (player.getInventory().getItemInMainHand().getType() == Material.GOLDEN_SWORD) {
+                    if (player.getInventory().getItemInMainHand().getType() == Material.GOLDEN_SWORD &&
+                            ParallelCTF.gameManager.isPlayerNotFlagCarrier(player)) {
                         double health = player.getHealth();
                         // heals a half a heart every second
                         if (health < 20D) {

@@ -5,6 +5,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
@@ -91,6 +93,16 @@ public class CTFPlayer {
      */
     public void medicHeal() {
         ctfClass.giveClass();
+        if (ParallelCTF.gameManager.getBlueFlagCarrier() == this) {
+            ItemStack banner = new ItemStack(Material.BLUE_BANNER);
+            player.getInventory().setItem(EquipmentSlot.HEAD, banner);
+            player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, true, false));
+        }
+        if (ParallelCTF.gameManager.getRedFlagCarrier() == this) {
+            ItemStack banner = new ItemStack(Material.RED_BANNER);
+            player.getInventory().setItem(EquipmentSlot.HEAD, banner);
+            player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, true, false));
+        }
         player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 100, 4, true));
         healingCooldown = true;
         Bukkit.getScheduler().runTaskLater(ParallelCTF.gameManager.getPlugin(), () -> {
@@ -118,10 +130,10 @@ public class CTFPlayer {
         else {
             player.teleport(ParallelCTF.gameManager.ctfMap.redSpawnPos);
         }
-        // apparently this needs to be run a tick later
-        Bukkit.getScheduler().runTask(ParallelCTF.gameManager.getPlugin(), () -> {
+        // apparently this needs to be run a tick (or two) later
+        Bukkit.getScheduler().runTaskLater(ParallelCTF.gameManager.getPlugin(), () -> {
             player.setFireTicks(0);
-        });
+        }, 2L);
         player.setFallDistance(0);
         player.setHealth(20D);
         ctfClass.giveClass();
@@ -133,7 +145,7 @@ public class CTFPlayer {
         }
         // medic cobwebs are removed on death
         if (this.ctfClass instanceof MedicClass medic) {
-            medic.placedWebs.forEach(x -> x.setType(Material.AIR));
+            medic.placedWebs.forEach((l) -> l.getBlock().setType(Material.AIR));
         }
         if (ParallelCTF.gameManager.getBlueFlagCarrier() == this) {
             ParallelCTF.gameManager.ctfMap.resetBlueFlag();

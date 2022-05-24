@@ -10,7 +10,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 import parallelmc.ctf.classes.DwarfClass;
@@ -91,7 +90,7 @@ public class GameManager {
         }
         pl.deleteBoard();
         players.remove(player);
-        if (redPlayers == 0 && bluePlayers == 0) {
+        if (redPlayers == 0 && bluePlayers == 0 && gameState == GameState.PLAY) {
             decideWinner();
             return;
         }
@@ -234,24 +233,24 @@ public class GameManager {
         this.plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             if (redFlagTaken) {
                 Player p = redFlagCarrier.getMcPlayer();
-                if (p.getHealth() - 1.5D <= 0D) {
-                    ParallelCTF.sendMessage(redFlagCarrier.getColorFormatting() + p.getName() + " §awas killed by §9Blue's Flag!");
+                if (p.getHealth() - 3D <= 0D) {
+                    ParallelCTF.sendMessage(redFlagCarrier.getColorFormatting() + p.getName() + " §awas killed by §cRed's Flag!");
                     redFlagCarrier.kill();
                 }
                 else {
-                    p.damage(1.5D);
-                    ParallelCTF.sendMessageTo(p, "You were damaged by §9Blue's Flag!");
+                    p.damage(3D);
+                    ParallelCTF.sendMessageTo(p, "You were damaged by §cRed's Flag!");
                 }
             }
             if (blueFlagTaken) {
                 Player p = blueFlagCarrier.getMcPlayer();
-                if (p.getHealth() - 1.5D <= 0D) {
-                    ParallelCTF.sendMessage(blueFlagCarrier.getColorFormatting() + p.getName() + " §awas killed by §cRed's Flag!");
+                if (p.getHealth() - 3D <= 0D) {
+                    ParallelCTF.sendMessage(blueFlagCarrier.getColorFormatting() + p.getName() + " §awas killed by §9Blue's Flag!");
                     blueFlagCarrier.kill();
                 }
                 else {
-                    p.damage(1.5D);
-                    ParallelCTF.sendMessageTo(p, "You were damaged by §cRed's Flag!");
+                    p.damage(3D);
+                    ParallelCTF.sendMessageTo(p, "You were damaged by §9Blue's Flag!");
                 }
             }
         }, 0L, 300L);
@@ -261,10 +260,10 @@ public class GameManager {
             int secs = secondsLeft % 60;
             boolean redNl = redFlagTaken && (redFlagCarrier.getMcPlayer().getName().length() > 10);
             boolean blueNl = blueFlagTaken && (blueFlagCarrier.getMcPlayer().getName().length() > 10);
-            List<String> flagLines = List.of("§cFlag Status | " + (ParallelCTF.gameManager.isRedFlagTaken() ? "Held by " + (redNl ? "" : ParallelCTF.gameManager.getRedFlagCarrier().getMcPlayer().getName()) : "Home"),
-                    (redNl ? ParallelCTF.gameManager.getRedFlagCarrier().getMcPlayer().getName() : ""),
-                    "§9Flag Status | " + (ParallelCTF.gameManager.isBlueFlagTaken() ? "Held by " + (blueNl ? "" : ParallelCTF.gameManager.getBlueFlagCarrier().getMcPlayer().getName()) : "Home"),
-                    (blueNl ? ParallelCTF.gameManager.getBlueFlagCarrier().getMcPlayer().getName() : ""));
+            List<String> flagLines = List.of("§cFlag Status | " + (isRedFlagTaken() ? "Held by " + (redNl ? "" : getRedFlagCarrier().getMcPlayer().getName()) : "Home"),
+                    (redNl ? getRedFlagCarrier().getColorFormatting() + getRedFlagCarrier().getMcPlayer().getName() : ""),
+                    "§9Flag Status | " + (isBlueFlagTaken() ? "Held by " + (blueNl ? "" : getBlueFlagCarrier().getMcPlayer().getName()) : "Home"),
+                    (blueNl ? getBlueFlagCarrier().getColorFormatting() + getBlueFlagCarrier().getMcPlayer().getName() : ""));
             players.forEach((p, c) -> {
                 // java wizardry but prevents having to run the above for every player
                 c.updateBoard(mins, secs, capturesToWin, redCaptures, blueCaptures, flagLines.toArray(String[]::new));
@@ -329,6 +328,11 @@ public class GameManager {
     }
 
     public Plugin getPlugin() { return this.plugin; }
+
+    public boolean isPlayerNotFlagCarrier(Player p) {
+        CTFPlayer pl = this.getPlayer(p);
+        return (!redFlagTaken || redFlagCarrier != pl) && (!blueFlagTaken || blueFlagCarrier != pl);
+    }
 
     /***
      * Decides the winner in the case of a force end or the clock hits zero

@@ -50,7 +50,7 @@ public class PyroClass extends CTFClass {
         bow.setItemMeta(bmeta);
         ItemStack flint = new ItemStack(Material.FLINT_AND_STEEL);
         Damageable fmeta = (Damageable)flint.getItemMeta();
-        fmeta.setDamage(48);
+        fmeta.setDamage(40);
         flint.setItemMeta(fmeta);
         this.hotbar = new ItemStack[] {
                 axe,

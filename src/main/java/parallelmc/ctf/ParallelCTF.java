@@ -19,7 +19,7 @@ public class ParallelCTF extends JavaPlugin {
     public static Level LOG_LEVEL = Level.INFO;
     public static final HashMap<String, Class<? extends CTFClass>> classes = new HashMap<>();
     public static GameManager gameManager;
-    public static final BossBar alphaBossBar = BossBar.bossBar(Component.text("ParallelCTF v1.2 Alpha Gameplay", NamedTextColor.YELLOW), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
+    public static final BossBar alphaBossBar = BossBar.bossBar(Component.text("ParallelCTF v1.3 Alpha Gameplay", NamedTextColor.YELLOW), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
 
     @Override
     public void onLoad() {
@@ -73,6 +73,9 @@ public class ParallelCTF extends JavaPlugin {
         this.getCommand("pyro").setExecutor(new Pyro());
         this.getCommand("assassin").setExecutor(new Assassin());
         this.getCommand("dwarf").setExecutor(new Dwarf());
+        this.getCommand("md").setExecutor(new CallMedic());
+        this.getCommand("d").setExecutor(new Defend());
+        this.getCommand("c").setExecutor(new Careful());
 
         // load config
         World world = this.getServer().getWorld("world-ctf");
