@@ -42,6 +42,7 @@ parallelmc\ctf\commands\Careful.class
 parallelmc\ctf\classes\ArcherClass.class
 parallelmc\ctf\commands\Pyro.class
 fr\mrmicky\fastboard\FastReflection$PacketConstructor.class
+parallelmc\ctf\GameManager$1.class
 parallelmc\ctf\events\OnPlayerLeave.class
 parallelmc\ctf\classes\DwarfClass$1.class
 parallelmc\ctf\classes\TankClass.class

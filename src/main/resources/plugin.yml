@@ -1,9 +1,10 @@
 name: "ParallelCTF"
-version: "1.3.0"
+version: "1.4.0"
 main: parallelmc.ctf.ParallelCTF
 api-version: 1.18
 author: EBro912
 description: A Capture the Flag plugin for Parallel events
+depend: [ProtocolLib]
 commands:
   debug:
     description: Shows debug info

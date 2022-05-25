@@ -1,5 +1,15 @@
 package parallelmc.ctf;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.PlayerInfoData;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -12,7 +22,10 @@ import parallelmc.ctf.classes.*;
 import parallelmc.ctf.commands.*;
 import parallelmc.ctf.events.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 
 public class ParallelCTF extends JavaPlugin {
@@ -20,6 +33,7 @@ public class ParallelCTF extends JavaPlugin {
     public static final HashMap<String, Class<? extends CTFClass>> classes = new HashMap<>();
     public static GameManager gameManager;
     public static final BossBar alphaBossBar = BossBar.bossBar(Component.text("ParallelCTF v1.3 Alpha Gameplay", NamedTextColor.YELLOW), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
+    private static ProtocolManager protocolManager;
 
     @Override
     public void onLoad() {
@@ -32,6 +46,7 @@ public class ParallelCTF extends JavaPlugin {
         classes.put("Soldier", SoldierClass.class);
         classes.put("Tank", TankClass.class);
         classes.put("Spectator", SpectatorClass.class);
+        protocolManager = ProtocolLibrary.getProtocolManager();
     }
 
     @Override
@@ -117,5 +132,9 @@ public class ParallelCTF extends JavaPlugin {
         for (Player p : Bukkit.getOnlinePlayers()) {
             sendMessageTo(p, message);
         }
+    }
+
+    public static ProtocolManager getProtocolManager() {
+        return protocolManager;
     }
 }

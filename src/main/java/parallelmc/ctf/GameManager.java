@@ -1,5 +1,14 @@
 package parallelmc.ctf;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.PlayerInfoData;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -16,9 +25,8 @@ import parallelmc.ctf.classes.DwarfClass;
 import parallelmc.ctf.classes.NinjaClass;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import java.util.logging.Level;
 
 public class GameManager {
@@ -75,6 +83,7 @@ public class GameManager {
                 player.teleport(ctfMap.redSpawnPos);
             }
         }
+        updateName(player);
     }
 
     /***
@@ -148,6 +157,7 @@ public class GameManager {
         if (gameState == GameState.PLAY)
             pl.kill();
         pl.setTeam(newTeam);
+        updateName(player);
     }
 
     /***
@@ -300,6 +310,52 @@ public class GameManager {
                 }
             });
         }, 0L, 1L);
+    }
+
+    /**
+     * Forces a player's name to update to the correct team color
+     * Extremely jank implementation but it works for now
+     * @param p The player to update
+     */
+    private void updateName(Player p) {
+        CTFPlayer player = getPlayer(p);
+        PlayerInfoData data = new PlayerInfoData(WrappedGameProfile.fromPlayer(p), 0, EnumWrappers.NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(player.getColorFormatting() + p.getName()));
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+        packet.getPlayerInfoAction().write(0, EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
+        packet.getPlayerInfoDataLists().write(0, Collections.singletonList(data));
+        for (Player pl : plugin.getServer().getOnlinePlayers()) {
+            if (pl.equals(p)) continue;
+            pl.hidePlayer(plugin, p);
+            try {
+                ParallelCTF.getProtocolManager().sendServerPacket(pl, packet);
+            }
+            catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+        ParallelCTF.getProtocolManager().addPacketListener(new PacketAdapter(plugin, ListenerPriority.NORMAL, PacketType.Play.Server.PLAYER_INFO) {
+            @Override
+            public void onPacketSending(PacketEvent event) {
+                if (event.getPacketType() == PacketType.Play.Server.PLAYER_INFO) {
+                    PacketContainer packet = event.getPacket();
+                    PlayerInfoData oldData = packet.getPlayerInfoDataLists().read(0).get(0);
+                        if (packet.getPlayerInfoAction().read(0) == EnumWrappers.PlayerInfoAction.ADD_PLAYER) {
+                            if (oldData.getProfile().getName().equals(p.getName())) {
+                            CTFPlayer player = getPlayer(p);
+                            String nameStr = player.getColorFormatting() + p.getName();
+                            WrappedChatComponent name = WrappedChatComponent.fromText(nameStr);
+                            PlayerInfoData newData = new PlayerInfoData(oldData.getProfile().withName(nameStr), oldData.getLatency(), oldData.getGameMode(), name);
+                            packet.getPlayerInfoDataLists().write(0, Collections.singletonList(newData));
+                            event.setPacket(packet);
+                        }
+                    }
+                }
+            }
+        });
+        for (Player pl : plugin.getServer().getOnlinePlayers()) {
+            if (pl.equals(p)) continue;
+            pl.showPlayer(plugin, p);
+        }
     }
 
     /**
