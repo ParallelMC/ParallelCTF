@@ -233,7 +233,7 @@ public class GameManager {
     public void start() {
         this.plugin.getServer().getScheduler().cancelTasks(plugin);
         // default map
-        String winningMap = "aztec";
+        String winningMap = this.defaultMap;
         int winningVotes = -1;
         for (Map.Entry<String, Integer> e : mapVotes.entrySet()) {
             if (e.getValue() > winningVotes) {
