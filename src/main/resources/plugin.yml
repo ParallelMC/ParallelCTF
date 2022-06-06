@@ -18,9 +18,16 @@ commands:
     description: Forces the game to end
     usage: /endgame
     default: op
+  loadmap:
+    description: Loads a map from the map pool
+    usage: /loadmap
+    default: op
   votestart:
     description: Vote to start the game
     usage: /votestart
+  votemap:
+    description: Vote for a map
+    usage: /votemap
   team:
     description: Change your team
     usage: /team <red/blue/spectator>

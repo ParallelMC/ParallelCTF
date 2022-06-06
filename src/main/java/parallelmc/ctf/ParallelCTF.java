@@ -1,15 +1,7 @@
 package parallelmc.ctf;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.comphenix.protocol.wrappers.PlayerInfoData;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -22,17 +14,14 @@ import parallelmc.ctf.classes.*;
 import parallelmc.ctf.commands.*;
 import parallelmc.ctf.events.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Level;
 
 public class ParallelCTF extends JavaPlugin {
     public static Level LOG_LEVEL = Level.INFO;
     public static final HashMap<String, Class<? extends CTFClass>> classes = new HashMap<>();
     public static GameManager gameManager;
-    public static final BossBar alphaBossBar = BossBar.bossBar(Component.text("ParallelCTF v1.3 Alpha Gameplay", NamedTextColor.YELLOW), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
+    public static final BossBar alphaBossBar = BossBar.bossBar(Component.text("ParallelCTF v1.4 Alpha Gameplay", NamedTextColor.YELLOW), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
     private static ProtocolManager protocolManager;
 
     @Override
@@ -73,7 +62,9 @@ public class ParallelCTF extends JavaPlugin {
         manager.registerEvents(new OnChat(), this);
         this.getCommand("startgame").setExecutor(new StartGame());
         this.getCommand("endgame").setExecutor(new EndGame());
+        this.getCommand("loadmap").setExecutor(new LoadMap());
         this.getCommand("votestart").setExecutor(new VoteStart());
+        this.getCommand("votemap").setExecutor(new VoteMap());
         this.getCommand("shuffleteams").setExecutor(new ShuffleTeams());
         this.getCommand("debug").setExecutor(new Debug());
         this.getCommand("info").setExecutor(new ClassInfo());
@@ -99,10 +90,16 @@ public class ParallelCTF extends JavaPlugin {
             return;
         }
         FileConfiguration config = this.getConfig();
-        gameManager = new GameManager(this,
-                new Location(world, config.getDouble("pregame.x"), config.getDouble("pregame.y"), config.getDouble("pregame.z")),
-                config.getInt("win_captures"));
-        gameManager.loadMap();
+        String defaultMap = config.getString("default_map");
+        if (defaultMap == null) {
+            ParallelCTF.log(Level.SEVERE, "Could not find default_map in config!");
+        } else {
+            gameManager = new GameManager(this,
+                    new Location(world, config.getDouble("pregame.x"), config.getDouble("pregame.y"), config.getDouble("pregame.z")),
+                    config.getInt("win_captures"), defaultMap);
+            gameManager.loadMap(defaultMap);
+        }
+
 
         // setup important gamerules
         world.setGameRule(GameRule.DO_FIRE_TICK, true);

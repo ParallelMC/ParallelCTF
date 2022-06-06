@@ -9,6 +9,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.google.common.io.Files;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -20,9 +21,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import parallelmc.ctf.classes.CTFClass;
 import parallelmc.ctf.classes.DwarfClass;
 import parallelmc.ctf.classes.NinjaClass;
+import parallelmc.ctf.classes.SpectatorClass;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -42,17 +46,25 @@ public class GameManager {
     private final Plugin plugin;
     public Location preGameLoc;
     private final int capturesToWin;
+    private final String defaultMap;
     public GameState gameState;
+    private final HashMap<String, CTFMap> maps = new HashMap<>();
     public CTFMap ctfMap;
-    public HashSet<Player> voteStart = new HashSet<>();
     public HashMap<Player, CTFPlayer> players = new HashMap<>();
     public HashMap<Entity, ArrowShot> shotArrows = new HashMap<>();
+    public HashSet<Player> voteStart = new HashSet<>();
+    public HashSet<Player> voteMap = new HashSet<>();
+    public HashMap<String, Integer> mapVotes = new HashMap<>();
 
-    public GameManager(Plugin plugin, Location preGameLoc, int winCaps) {
+    public GameManager(Plugin plugin, Location preGameLoc, int winCaps, String defaultMap) {
         this.plugin = plugin;
         this.preGameLoc = preGameLoc;
         this.capturesToWin = winCaps;
+        this.defaultMap = defaultMap;
         this.gameState = GameState.PREGAME;
+        preloadMaps();
+        maps.forEach((n, m) -> mapVotes.put(n, 0));
+        startPregameLoop();
     }
 
     /***
@@ -160,34 +172,58 @@ public class GameManager {
         updateName(player);
     }
 
-    /***
-     * Loads a map from a file config
-     * Will allow hot loading of different maps between rounds in the future
-     */
-    public void loadMap() {
-        FileConfiguration config = new YamlConfiguration();
-        try {
-            config.load(new File(plugin.getDataFolder(), "map.yml"));
-        } catch (Exception e) {
-            ParallelCTF.log(Level.SEVERE, "Failed to load map configuration! Does the file exist?");
+    private void preloadMaps() {
+        String[] mapNames = plugin.getDataFolder().list();
+        if (mapNames == null) {
+            ParallelCTF.log(Level.SEVERE, "Failed to preload maps! Does config folder exist?");
             return;
         }
         // assumes the world name to be world-ctf
         World world = plugin.getServer().getWorld("world-ctf");
-        // beautiful constructor
-        this.ctfMap = new CTFMap(
-                world,
-                config.getString("name"),
-                new Location(world, config.getDouble("red.flag.x"), config.getDouble("red.flag.y"), config.getDouble("red.flag.z")),
-                new Location(world, config.getDouble("blue.flag.x"), config.getDouble("blue.flag.y"), config.getDouble("blue.flag.z")),
-                new Location(world, config.getDouble("red.spawn.x"), config.getDouble("red.spawn.y"), config.getDouble("red.spawn.z")),
-                new Location(world, config.getDouble("blue.spawn.x"), config.getDouble("blue.spawn.y"), config.getDouble("blue.spawn.z")),
-                new Location(world, config.getDouble("red.corner1.x"), config.getDouble("red.corner1.y"), config.getDouble("red.corner1.z")),
-                new Location(world, config.getDouble("red.corner2.x"), config.getDouble("red.corner2.y"), config.getDouble("red.corner2.z")),
-                new Location(world, config.getDouble("blue.corner1.x"), config.getDouble("blue.corner1.y"), config.getDouble("blue.corner1.z")),
-                new Location(world, config.getDouble("blue.corner2.x"), config.getDouble("blue.corner2.y"), config.getDouble("blue.corner2.z"))
-        );
-        ParallelCTF.log(Level.WARNING, "Loaded CTF Map " + this.ctfMap.name);
+        int loadedMaps = 0;
+        for (String m : mapNames) {
+            if (m.equals("config.yml")) continue;
+            FileConfiguration config = new YamlConfiguration();
+            try {
+                config.load(new File(plugin.getDataFolder(), m));
+            } catch (Exception e) {
+                ParallelCTF.log(Level.WARNING, "Failed to load map configuration!");
+                continue;
+            }
+            // google function to remove extension
+            @SuppressWarnings("UnstableApiUsage")
+            String map = Files.getNameWithoutExtension(m);
+            // beautiful constructor
+            maps.put(map, new CTFMap(
+                    world,
+                    config.getString("name"),
+                    new Location(world, config.getDouble("red.flag.x"), config.getDouble("red.flag.y"), config.getDouble("red.flag.z")),
+                    new Location(world, config.getDouble("blue.flag.x"), config.getDouble("blue.flag.y"), config.getDouble("blue.flag.z")),
+                    new Location(world, config.getDouble("red.spawn.x"), config.getDouble("red.spawn.y"), config.getDouble("red.spawn.z")),
+                    new Location(world, config.getDouble("blue.spawn.x"), config.getDouble("blue.spawn.y"), config.getDouble("blue.spawn.z")),
+                    new Location(world, config.getDouble("red.corner1.x"), config.getDouble("red.corner1.y"), config.getDouble("red.corner1.z")),
+                    new Location(world, config.getDouble("red.corner2.x"), config.getDouble("red.corner2.y"), config.getDouble("red.corner2.z")),
+                    new Location(world, config.getDouble("blue.corner1.x"), config.getDouble("blue.corner1.y"), config.getDouble("blue.corner1.z")),
+                    new Location(world, config.getDouble("blue.corner2.x"), config.getDouble("blue.corner2.y"), config.getDouble("blue.corner2.z"))
+            ));
+            loadedMaps++;
+            ParallelCTF.log(Level.WARNING, "Loaded map config " + map);
+        }
+        ParallelCTF.log(Level.WARNING, "Loaded " + loadedMaps + " of " + (mapNames.length - 1) + " maps");
+    }
+
+    /***
+     * Loads a map from the map hashmap
+     */
+    public boolean loadMap(@NotNull String mapName) {
+        if (maps.containsKey(mapName)) {
+            this.ctfMap = maps.get(mapName);
+            return true;
+        }
+        else {
+            ParallelCTF.log(Level.SEVERE, "Could not find map " + mapName);
+            return false;
+        }
     }
 
     /***
@@ -195,8 +231,24 @@ public class GameManager {
      * Each player will be given the Tank class by default
      */
     public void start() {
+        this.plugin.getServer().getScheduler().cancelTasks(plugin);
+        // default map
+        String winningMap = "aztec";
+        int winningVotes = -1;
+        for (Map.Entry<String, Integer> e : mapVotes.entrySet()) {
+            if (e.getValue() > winningVotes) {
+                winningMap = e.getKey();
+                winningVotes = e.getValue();
+            }
+        }
+        if (!loadMap(winningMap)) {
+            ParallelCTF.sendMessage("Failed to load map " + winningMap + "! Game start aborted.");
+            return;
+        }
+        ParallelCTF.sendMessage("Map set to " + winningMap + "!");
         players.forEach((p, cp) -> {
-            cp.setClass("Tank");
+            if (!(cp.getCtfClass() instanceof SpectatorClass))
+                cp.setClass("Tank");
             if (cp.getTeam() == CTFTeam.BLUE) {
                 p.teleport(ctfMap.blueSpawnPos);
             } else {
@@ -231,7 +283,27 @@ public class GameManager {
             this.plugin.getServer().getScheduler().cancelTasks(plugin);
         });
         gameState = GameState.PREGAME;
+        startPregameLoop();
+    }
 
+    private void startPregameLoop() {
+        this.plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+            String winningMap = "";
+            int winningVotes = -1;
+            for (Map.Entry<String, Integer> e : mapVotes.entrySet()) {
+                if (e.getValue() > winningVotes) {
+                    winningMap = e.getKey();
+                    winningVotes = e.getValue();
+                }
+            }
+            // thank you java
+            String boardMap = winningMap;
+            int neededPlayers = players.size() - 1;
+            players.forEach((p, c) -> {
+                p.setFoodLevel(37);
+                c.updateLobbyBoard(voteStart.size(), Math.max(neededPlayers, 4), boardMap, mapVotes.get(boardMap));
+            });
+        }, 0L, 20L);
     }
 
     /***

@@ -41,6 +41,7 @@ parallelmc\ctf\commands\ForceTeam.class
 parallelmc\ctf\commands\Careful.class
 parallelmc\ctf\classes\ArcherClass.class
 parallelmc\ctf\commands\Pyro.class
+parallelmc\ctf\commands\LoadMap.class
 fr\mrmicky\fastboard\FastReflection$PacketConstructor.class
 parallelmc\ctf\GameManager$1.class
 parallelmc\ctf\events\OnPlayerLeave.class
@@ -48,6 +49,7 @@ parallelmc\ctf\classes\DwarfClass$1.class
 parallelmc\ctf\classes\TankClass.class
 parallelmc\ctf\events\OnDropItem.class
 parallelmc\ctf\classes\AssassinClass.class
+parallelmc\ctf\commands\VoteMap.class
 parallelmc\ctf\GameManager.class
 parallelmc\ctf\ArrowShot.class
 parallelmc\ctf\events\OnRightClick.class

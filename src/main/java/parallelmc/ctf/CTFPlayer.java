@@ -67,6 +67,19 @@ public class CTFPlayer {
         ctfClass.giveClass();
     }
 
+    public void updateLobbyBoard(int curVotes, int neededVotes, String nextMap, int mapVotes) {
+        this.board.updateLines(
+                "",
+                "§dVotes needed to start",
+                "§6" + curVotes + "/" + neededVotes,
+                "§7/votestart",
+                "",
+                "§dNext Map",
+                "§6" + nextMap + " (" + mapVotes + " votes)",
+                "§7/votemap"
+        );
+    }
+
     /***
      * Updates the player's scoreboard
      */
