@@ -23,7 +23,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import parallelmc.ctf.classes.CTFClass;
 import parallelmc.ctf.classes.DwarfClass;
 import parallelmc.ctf.classes.NinjaClass;
 import parallelmc.ctf.classes.SpectatorClass;
@@ -50,10 +49,11 @@ public class GameManager {
     public GameState gameState;
     private final HashMap<String, CTFMap> maps = new HashMap<>();
     public CTFMap ctfMap;
-    public HashMap<Player, CTFPlayer> players = new HashMap<>();
+    public HashMap<UUID, CTFPlayer> players = new HashMap<>();
+    public HashSet<UUID> hasNameHandler = new HashSet<>();
     public HashMap<Entity, ArrowShot> shotArrows = new HashMap<>();
-    public HashSet<Player> voteStart = new HashSet<>();
-    public HashSet<Player> voteMap = new HashSet<>();
+    public HashSet<UUID> voteStart = new HashSet<>();
+    public HashSet<UUID> voteMap = new HashSet<>();
     public HashMap<String, Integer> mapVotes = new HashMap<>();
 
     public GameManager(Plugin plugin, Location preGameLoc, int winCaps, String defaultMap) {
@@ -76,7 +76,7 @@ public class GameManager {
             player.teleport(ParallelCTF.gameManager.preGameLoc);
         }
         if (redPlayers > bluePlayers) {
-            players.put(player, new CTFPlayer(player, CTFTeam.BLUE));
+            players.put(player.getUniqueId(), new CTFPlayer(player, CTFTeam.BLUE));
             player.playerListName(Component.text(player.getName(), NamedTextColor.BLUE));
             player.displayName(Component.text(player.getName(), NamedTextColor.BLUE));
             ParallelCTF.sendMessageTo(player, "Joined §9Blue team!");
@@ -86,7 +86,7 @@ public class GameManager {
             }
         }
         else { // secretly favor red to make things easier
-            players.put(player, new CTFPlayer(player, CTFTeam.RED));
+            players.put(player.getUniqueId(), new CTFPlayer(player, CTFTeam.RED));
             player.playerListName(Component.text(player.getName(), NamedTextColor.RED));
             player.displayName(Component.text(player.getName(), NamedTextColor.RED));
             ParallelCTF.sendMessageTo(player, "Joined §cRed team!");
@@ -110,7 +110,7 @@ public class GameManager {
             bluePlayers--;
         }
         pl.deleteBoard();
-        players.remove(player);
+        players.remove(player.getUniqueId());
         if (redPlayers == 0 && bluePlayers == 0 && gameState == GameState.PLAY) {
             decideWinner();
             return;
@@ -129,7 +129,7 @@ public class GameManager {
      * @return a CTFPlayer
      */
     public CTFPlayer getPlayer(Player player) {
-        return players.get(player);
+        return players.get(player.getUniqueId());
     }
 
     /***
@@ -138,7 +138,7 @@ public class GameManager {
      * @param newTeam The team they will join
      */
     public void changeTeam(Player player, CTFTeam newTeam) {
-        CTFPlayer pl = players.get(player);
+        CTFPlayer pl = players.get(player.getUniqueId());
         if (newTeam == CTFTeam.SPECTATOR) {
             if (pl.getTeam() == CTFTeam.RED)
                 redPlayers--;
@@ -249,11 +249,16 @@ public class GameManager {
         players.forEach((p, cp) -> {
             if (!(cp.getCtfClass() instanceof SpectatorClass))
                 cp.setClass("Tank");
+            Player player = plugin.getServer().getPlayer(p);
+            if (player == null) {
+                ParallelCTF.log(Level.WARNING, "Couldn't find player with UUID of " + p);
+                return;
+            }
             if (cp.getTeam() == CTFTeam.BLUE) {
-                p.teleport(ctfMap.blueSpawnPos);
+                player.teleport(ctfMap.blueSpawnPos);
             } else {
                 // teleport spectators to red team's spawn too cause why not
-                p.teleport(ctfMap.redSpawnPos);
+                player.teleport(ctfMap.redSpawnPos);
             }
         });
         startGameLoop();
@@ -273,13 +278,18 @@ public class GameManager {
         blueCaptures = 0;
         secondsLeft = 1800;
         players.forEach((p, cp) -> {
-            p.getInventory().clear();
-            p.getActivePotionEffects().clear();
-            p.setHealth(20D);
-            p.setFoodLevel(37);
-            p.setExp(0F);
-            p.setLevel(0);
-            p.teleport(preGameLoc);
+            Player player = plugin.getServer().getPlayer(p);
+            if (player == null) {
+                ParallelCTF.log(Level.WARNING, "Couldn't find player with UUID of " + p);
+                return;
+            }
+            player.getInventory().clear();
+            player.getActivePotionEffects().clear();
+            player.setHealth(20D);
+            player.setFoodLevel(37);
+            player.setExp(0F);
+            player.setLevel(0);
+            player.teleport(preGameLoc);
             this.plugin.getServer().getScheduler().cancelTasks(plugin);
         });
         gameState = GameState.PREGAME;
@@ -300,7 +310,12 @@ public class GameManager {
             String boardMap = winningMap;
             int neededPlayers = players.size() - 1;
             players.forEach((p, c) -> {
-                p.setFoodLevel(37);
+                Player player = plugin.getServer().getPlayer(p);
+                if (player == null) {
+                    ParallelCTF.log(Level.WARNING, "Couldn't find player with UUID of " + p);
+                    return;
+                }
+                player.setFoodLevel(37);
                 c.updateLobbyBoard(voteStart.size(), Math.max(neededPlayers, 4), boardMap, mapVotes.get(boardMap));
             });
         }, 0L, 20L);
@@ -367,18 +382,23 @@ public class GameManager {
         // tick loop
         this.plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             players.forEach((p, c) -> {
+                Player player = plugin.getServer().getPlayer(p);
+                if (player == null) {
+                    ParallelCTF.log(Level.WARNING, "Couldn't find player with UUID of " + p);
+                    return;
+                }
                 if (c.getCtfClass() instanceof NinjaClass ninja && redFlagCarrier != c && blueFlagCarrier != c) {
-                    if (p.getInventory().getItemInMainHand().getType() == Material.REDSTONE) {
+                    if (player.getInventory().getItemInMainHand().getType() == Material.REDSTONE) {
                         if (!ninja.isInvisible())
-                            ninja.goInvisibleTo(p, c.getTeam() == CTFTeam.BLUE ? CTFTeam.RED : CTFTeam.BLUE);
+                            ninja.goInvisibleTo(player, c.getTeam() == CTFTeam.BLUE ? CTFTeam.RED : CTFTeam.BLUE);
                     }
                     else if (ninja.isInvisible()) {
-                        ninja.goVisibleTo(p, c.getTeam() == CTFTeam.BLUE ? CTFTeam.RED : CTFTeam.BLUE);
+                        ninja.goVisibleTo(player, c.getTeam() == CTFTeam.BLUE ? CTFTeam.RED : CTFTeam.BLUE);
                     }
                 }
                 // dwarfs intentionally cannot sprint, so dont update their food bar
                 if (!(c.getCtfClass() instanceof DwarfClass)) {
-                    p.setFoodLevel(37);
+                    player.setFoodLevel(37);
                 }
             });
         }, 0L, 1L);
@@ -405,25 +425,29 @@ public class GameManager {
                 e.printStackTrace();
             }
         }
-        ParallelCTF.getProtocolManager().addPacketListener(new PacketAdapter(plugin, ListenerPriority.NORMAL, PacketType.Play.Server.PLAYER_INFO) {
-            @Override
-            public void onPacketSending(PacketEvent event) {
-                if (event.getPacketType() == PacketType.Play.Server.PLAYER_INFO) {
-                    PacketContainer packet = event.getPacket();
-                    PlayerInfoData oldData = packet.getPlayerInfoDataLists().read(0).get(0);
+        if (!hasNameHandler.contains(p.getUniqueId())) {
+            ParallelCTF.getProtocolManager().addPacketListener(new PacketAdapter(plugin, ListenerPriority.NORMAL, PacketType.Play.Server.PLAYER_INFO) {
+                @Override
+                public void onPacketSending(PacketEvent event) {
+                    if (event.getPacketType() == PacketType.Play.Server.PLAYER_INFO) {
+                        PacketContainer packet = event.getPacket();
+                        PlayerInfoData oldData = packet.getPlayerInfoDataLists().read(0).get(0);
                         if (packet.getPlayerInfoAction().read(0) == EnumWrappers.PlayerInfoAction.ADD_PLAYER) {
+                            Player p = event.getPlayer();
                             if (oldData.getProfile().getName().equals(p.getName())) {
-                            CTFPlayer player = getPlayer(p);
-                            String nameStr = player.getColorFormatting() + p.getName();
-                            WrappedChatComponent name = WrappedChatComponent.fromText(nameStr);
-                            PlayerInfoData newData = new PlayerInfoData(oldData.getProfile().withName(nameStr), oldData.getLatency(), oldData.getGameMode(), name);
-                            packet.getPlayerInfoDataLists().write(0, Collections.singletonList(newData));
-                            event.setPacket(packet);
+                                CTFPlayer player = getPlayer(p);
+                                String nameStr = player.getColorFormatting() + p.getName();
+                                WrappedChatComponent name = WrappedChatComponent.fromText(nameStr);
+                                PlayerInfoData newData = new PlayerInfoData(oldData.getProfile().withName(nameStr), oldData.getLatency(), oldData.getGameMode(), name);
+                                packet.getPlayerInfoDataLists().write(0, Collections.singletonList(newData));
+                                event.setPacket(packet);
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
+            hasNameHandler.add(p.getUniqueId());
+        }
         for (Player pl : plugin.getServer().getOnlinePlayers()) {
             if (pl.equals(p)) continue;
             pl.showPlayer(plugin, p);

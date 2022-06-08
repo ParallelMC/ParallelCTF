@@ -21,7 +21,7 @@ public class ParallelCTF extends JavaPlugin {
     public static Level LOG_LEVEL = Level.INFO;
     public static final HashMap<String, Class<? extends CTFClass>> classes = new HashMap<>();
     public static GameManager gameManager;
-    public static final BossBar alphaBossBar = BossBar.bossBar(Component.text("ParallelCTF v1.4 Alpha Gameplay", NamedTextColor.YELLOW), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
+    public static final BossBar alphaBossBar = BossBar.bossBar(Component.text("ParallelCTF v1.4.1 Alpha Gameplay", NamedTextColor.YELLOW), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
     private static ProtocolManager protocolManager;
 
     @Override

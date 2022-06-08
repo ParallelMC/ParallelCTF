@@ -17,6 +17,7 @@ import parallelmc.ctf.CTFTeam;
 import parallelmc.ctf.ParallelCTF;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 
 public class NinjaClass extends CTFClass {
@@ -112,11 +113,17 @@ public class NinjaClass extends CTFClass {
 
     public void goInvisibleTo(Player playerToHide, CTFTeam team) {
         this.isInvisible = true;
+
         Plugin pl = ParallelCTF.gameManager.getPlugin();
         ParallelCTF.gameManager.players.forEach((p, c) -> {
-            if (p == playerToHide) return;
+            Player player = pl.getServer().getPlayer(p);
+            if (player == null) {
+                ParallelCTF.log(Level.WARNING, "Couldn't find player with UUID of " + p);
+                return;
+            }
+            if (player == playerToHide) return;
             if (c.getTeam() == team)
-                p.hidePlayer(pl, playerToHide);
+                player.hidePlayer(pl, playerToHide);
         });
         ParallelCTF.sendMessageTo(playerToHide, "You are now invisible!");
     }
@@ -125,9 +132,14 @@ public class NinjaClass extends CTFClass {
         this.isInvisible = false;
         Plugin pl = ParallelCTF.gameManager.getPlugin();
         ParallelCTF.gameManager.players.forEach((p, c) -> {
-            if (p == playerToUnhide) return;
+            Player player = pl.getServer().getPlayer(p);
+            if (player == null) {
+                ParallelCTF.log(Level.WARNING, "Couldn't find player with UUID of " + p);
+                return;
+            }
+            if (player == playerToUnhide) return;
             if (c.getTeam() == team)
-                p.showPlayer(pl, playerToUnhide);
+                player.showPlayer(pl, playerToUnhide);
         });
         ParallelCTF.sendMessageTo(playerToUnhide, "You are no longer invisible!");
     }

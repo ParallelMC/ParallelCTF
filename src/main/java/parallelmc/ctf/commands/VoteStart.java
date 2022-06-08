@@ -13,7 +13,7 @@ public class VoteStart implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, String[] args) {
         if (commandSender instanceof Player player) {
             if (ParallelCTF.gameManager.gameState == GameState.PREGAME) {
-                if (ParallelCTF.gameManager.voteStart.contains(player)) {
+                if (ParallelCTF.gameManager.voteStart.contains(player.getUniqueId())) {
                     ParallelCTF.sendMessageTo(player, "You have already voted to start!");
                     return true;
                 }
@@ -21,7 +21,7 @@ public class VoteStart implements CommandExecutor {
                     ParallelCTF.sendMessageTo(player, "There must be at least 4 players to start the game!");
                     return true;
                 }
-                ParallelCTF.gameManager.voteStart.add(player);
+                ParallelCTF.gameManager.voteStart.add(player.getUniqueId());
                 ParallelCTF.sendMessage(player.getName() + " has voted the start the game. (" +
                         ParallelCTF.gameManager.voteStart.size() + "/" + (ParallelCTF.gameManager.players.size() - 1) + " votes needed)");
                 if (ParallelCTF.gameManager.voteStart.size() >= ParallelCTF.gameManager.players.size() - 1) {

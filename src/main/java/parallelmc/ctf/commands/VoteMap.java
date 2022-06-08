@@ -15,7 +15,7 @@ public class VoteMap implements CommandExecutor {
             if (args.length < 1)
                 return false;
             if (ParallelCTF.gameManager.gameState == GameState.PREGAME) {
-                if (ParallelCTF.gameManager.voteMap.contains(player)) {
+                if (ParallelCTF.gameManager.voteMap.contains(player.getUniqueId())) {
                     ParallelCTF.sendMessageTo(player, "You have already voted for a map!");
                     return true;
                 }
@@ -27,7 +27,7 @@ public class VoteMap implements CommandExecutor {
                     });
                     return true;
                 }
-                ParallelCTF.gameManager.voteMap.add(player);
+                ParallelCTF.gameManager.voteMap.add(player.getUniqueId());
                 int prevVotes = ParallelCTF.gameManager.mapVotes.get(name);
                 ParallelCTF.gameManager.mapVotes.put(name, prevVotes + 1);
                 ParallelCTF.sendMessage(player.getName() + " voted for the map " + name + "! (" + (prevVotes + 1) + " votes)");
