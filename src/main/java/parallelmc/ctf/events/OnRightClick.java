@@ -22,7 +22,7 @@ public class OnRightClick implements Listener {
     @EventHandler
     public void onRightClick(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        CTFPlayer pl = ParallelCTF.gameManager.players.get(player);
+        CTFPlayer pl = ParallelCTF.gameManager.getPlayer(player);
         ItemStack heldItem = player.getInventory().getItemInMainHand();
         Action action = event.getAction();
         if (heldItem.getType() == Material.COOKED_BEEF && (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR)) {
