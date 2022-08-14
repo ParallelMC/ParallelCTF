@@ -13,7 +13,7 @@ public class Careful implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, String[] args) {
         if (commandSender instanceof Player player) {
             CTFPlayer pl = ParallelCTF.gameManager.getPlayer(player);
-            ParallelCTF.sendMessage(pl.getColorFormatting() + player.getName() + " §8> §6/c §aCareful!");
+            ParallelCTF.sendMessageToTeam(pl, pl.getColorFormatting() + player.getName() + " §8> §6/c §aCareful!");
         }
         return true;
     }

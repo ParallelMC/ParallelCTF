@@ -8,12 +8,12 @@ import org.jetbrains.annotations.NotNull;
 import parallelmc.ctf.CTFPlayer;
 import parallelmc.ctf.ParallelCTF;
 
-public class Defend implements CommandExecutor {
+public class Buffs implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, String[] args) {
         if (commandSender instanceof Player player) {
             CTFPlayer pl = ParallelCTF.gameManager.getPlayer(player);
-            ParallelCTF.sendMessageToTeam(pl, pl.getColorFormatting() + player.getName() + " §8> §6/d §aDefend!");
+            ParallelCTF.sendMessageToTeam(pl, pl.getColorFormatting() + player.getName() + " §8> §6/b §dNeed Buffs!");
         }
         return true;
     }

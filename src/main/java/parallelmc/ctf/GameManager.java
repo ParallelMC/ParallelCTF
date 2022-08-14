@@ -433,7 +433,6 @@ public class GameManager {
                         PacketContainer packet = event.getPacket();
                         PlayerInfoData oldData = packet.getPlayerInfoDataLists().read(0).get(0);
                         if (packet.getPlayerInfoAction().read(0) == EnumWrappers.PlayerInfoAction.ADD_PLAYER) {
-                            Player p = event.getPlayer();
                             if (oldData.getProfile().getName().equals(p.getName())) {
                                 CTFPlayer player = getPlayer(p);
                                 String nameStr = player.getColorFormatting() + p.getName();

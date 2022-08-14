@@ -1,5 +1,5 @@
 name: "ParallelCTF"
-version: "1.4.1"
+version: "1.5"
 main: parallelmc.ctf.ParallelCTF
 api-version: 1.18
 author: EBro912
@@ -69,6 +69,9 @@ commands:
   dwarf:
     description: Equips the Dwarf class
     usage: /dwarf
+  chemist:
+    description: Equips the Chemist class
+    usage: /chemist
   md:
     description: Call for a medic
     usage: /md
@@ -78,4 +81,7 @@ commands:
   c:
     description: Tell your team to be careful
     usage: /c
+  b:
+    description: Ask your Chemist for buffs
+    usage: /b
 

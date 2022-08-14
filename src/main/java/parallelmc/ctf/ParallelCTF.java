@@ -21,13 +21,14 @@ public class ParallelCTF extends JavaPlugin {
     public static Level LOG_LEVEL = Level.INFO;
     public static final HashMap<String, Class<? extends CTFClass>> classes = new HashMap<>();
     public static GameManager gameManager;
-    public static final BossBar alphaBossBar = BossBar.bossBar(Component.text("ParallelCTF v1.4.1 Alpha Gameplay", NamedTextColor.YELLOW), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
+    public static final BossBar alphaBossBar = BossBar.bossBar(Component.text("ParallelCTF v1.5 Alpha Gameplay", NamedTextColor.YELLOW), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
     private static ProtocolManager protocolManager;
 
     @Override
     public void onLoad() {
         classes.put("Archer", ArcherClass.class);
         classes.put("Assassin", AssassinClass.class);
+        classes.put("Chemist", ChemistClass.class);
         classes.put("Dwarf", DwarfClass.class);
         classes.put("Medic", MedicClass.class);
         classes.put("Ninja", NinjaClass.class);
@@ -79,9 +80,11 @@ public class ParallelCTF extends JavaPlugin {
         this.getCommand("pyro").setExecutor(new Pyro());
         this.getCommand("assassin").setExecutor(new Assassin());
         this.getCommand("dwarf").setExecutor(new Dwarf());
+        this.getCommand("chemist").setExecutor(new Chemist());
         this.getCommand("md").setExecutor(new CallMedic());
         this.getCommand("d").setExecutor(new Defend());
         this.getCommand("c").setExecutor(new Careful());
+        this.getCommand("b").setExecutor(new Buffs());
 
         // load config
         World world = this.getServer().getWorld("world-ctf");
@@ -118,6 +121,14 @@ public class ParallelCTF extends JavaPlugin {
 
     public static void log(Level level, String message) {
         Bukkit.getLogger().log(level, "[ParallelCTF] " + message);
+    }
+
+    public static void sendMessageToTeam(CTFPlayer player, String message) {
+        for (CTFPlayer p : gameManager.players.values()) {
+            if (p.getTeam() == player.getTeam()) {
+                sendMessageTo(p.getMcPlayer(), message);
+            }
+        }
     }
 
     public static void sendMessageTo(Player player, String message) {
