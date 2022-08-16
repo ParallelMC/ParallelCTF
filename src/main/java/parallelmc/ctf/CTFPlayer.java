@@ -135,7 +135,7 @@ public class CTFPlayer {
         https://i.kym-cdn.com/photos/images/original/001/688/902/e4b.jpg
         "Kills" a player without them actually being killed, and spawns a villager in their place to represent death
     */
-    public void kill() {
+    public void kill(KillReason reason) {
         Location vLoc = player.getLocation();
         if (this.team == CTFTeam.BLUE) {
             player.teleport(ParallelCTF.gameManager.ctfMap.blueSpawnPos);
@@ -159,14 +159,23 @@ public class CTFPlayer {
         // medic cobwebs are removed on death
         if (this.ctfClass instanceof MedicClass medic) {
             medic.placedWebs.forEach((l) -> l.getBlock().setType(Material.AIR));
+            medic.placedWebs.clear();
         }
         if (ParallelCTF.gameManager.getBlueFlagCarrier() == this) {
-            ParallelCTF.gameManager.ctfMap.resetBlueFlag();
-            ParallelCTF.sendMessage("§9Blue's Flag §ahas been reset!");
+            if (reason == KillReason.SPAWN_CAMP || reason == KillReason.CLASS_CHANGE || reason == KillReason.TEAM_CHANGE) {
+                ParallelCTF.gameManager.ctfMap.resetBlueFlag();
+                ParallelCTF.sendMessage("§9Blue's Flag §ahas been reset!");
+                return;
+            }
+            ParallelCTF.gameManager.ctfMap.dropBlueFlag(vLoc);
         }
         if (ParallelCTF.gameManager.getRedFlagCarrier() == this) {
-            ParallelCTF.gameManager.ctfMap.resetRedFlag();
-            ParallelCTF.sendMessage("§cRed's Flag §ahas been reset!");
+            if (reason == KillReason.SPAWN_CAMP || reason == KillReason.CLASS_CHANGE || reason == KillReason.TEAM_CHANGE) {
+                ParallelCTF.gameManager.ctfMap.resetRedFlag();
+                ParallelCTF.sendMessage("§cRed's Flag §ahas been reset!");
+                return;
+            }
+            ParallelCTF.gameManager.ctfMap.dropRedFlag(vLoc);
         }
         Villager villager = (Villager)player.getWorld().spawnEntity(vLoc, EntityType.VILLAGER);
         villager.setAI(false);

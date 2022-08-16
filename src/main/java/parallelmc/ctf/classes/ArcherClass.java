@@ -41,7 +41,7 @@ public class ArcherClass extends CTFClass {
         lore.clear();
         lore.add(Component.text("Hit enemies from afar to snipe them!", NamedTextColor.GRAY));
         bmeta.lore(lore);
-        bmeta.addEnchant(Enchantment.ARROW_KNOCKBACK, 2, false);
+        bmeta.addEnchant(Enchantment.ARROW_KNOCKBACK, 1, false);
         bmeta.setUnbreakable(true);
         bow.setItemMeta(bmeta);
         this.hotbar = new ItemStack[] {

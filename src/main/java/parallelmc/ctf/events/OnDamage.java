@@ -4,10 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-import parallelmc.ctf.CTFPlayer;
-import parallelmc.ctf.CTFTeam;
-import parallelmc.ctf.GameState;
-import parallelmc.ctf.ParallelCTF;
+import parallelmc.ctf.*;
 import parallelmc.ctf.classes.PyroClass;
 import parallelmc.ctf.classes.SoldierClass;
 
@@ -42,10 +39,10 @@ public class OnDamage implements Listener {
             }
             if (cause != EntityDamageEvent.DamageCause.ENTITY_ATTACK &&
                     cause != EntityDamageEvent.DamageCause.PROJECTILE &&
-                    player.getHealth() - event.getDamage() <= 0D) {
+                    player.getHealth() - event.getFinalDamage() <= 0D) {
                 event.setCancelled(true);
                 ParallelCTF.sendMessage(pl.getColorFormatting() + player.getName() + " §adied to " + event.getCause());
-                pl.kill();
+                pl.kill(KillReason.OTHER);
             }
         }
     }

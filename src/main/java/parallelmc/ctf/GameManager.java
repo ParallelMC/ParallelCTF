@@ -36,10 +36,15 @@ public class GameManager {
     private int redCaptures = 0;
     private int blueCaptures = 0;
     private int secondsLeft = 1800;
+    private int blueDroppedLeft = 30;
+    private int redDroppedLeft = 30;
     private int redPlayers = 0;
     private int bluePlayers = 0;
     private boolean redFlagTaken = false;
     private boolean blueFlagTaken = false;
+    private boolean redFlagDropped = false;
+    private boolean blueFlagDropped = false;
+
     private CTFPlayer redFlagCarrier;
     private CTFPlayer blueFlagCarrier;
     private final Plugin plugin;
@@ -167,7 +172,7 @@ public class GameManager {
             player.removePotionEffect(PotionEffectType.INVISIBILITY);
         }
         if (gameState == GameState.PLAY)
-            pl.kill();
+            pl.kill(KillReason.TEAM_CHANGE);
         pl.setTeam(newTeam);
         updateName(player);
     }
@@ -298,6 +303,10 @@ public class GameManager {
 
     private void startPregameLoop() {
         this.plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+            if (gameState == GameState.PLAY) {
+                ParallelCTF.log(Level.SEVERE, "PreGame loop running during PLAY. This shouldn't be happening!");
+                return;
+            }
             String winningMap = "";
             int winningVotes = -1;
             for (Map.Entry<String, Integer> e : mapVotes.entrySet()) {
@@ -332,7 +341,7 @@ public class GameManager {
                 Player p = redFlagCarrier.getMcPlayer();
                 if (p.getHealth() - 3D <= 0D) {
                     ParallelCTF.sendMessage(redFlagCarrier.getColorFormatting() + p.getName() + " §awas killed by §cRed's Flag!");
-                    redFlagCarrier.kill();
+                    redFlagCarrier.kill(KillReason.FLAG);
                 }
                 else {
                     p.damage(3D);
@@ -343,7 +352,7 @@ public class GameManager {
                 Player p = blueFlagCarrier.getMcPlayer();
                 if (p.getHealth() - 3D <= 0D) {
                     ParallelCTF.sendMessage(blueFlagCarrier.getColorFormatting() + p.getName() + " §awas killed by §9Blue's Flag!");
-                    blueFlagCarrier.kill();
+                    blueFlagCarrier.kill(KillReason.FLAG);
                 }
                 else {
                     p.damage(3D);
@@ -357,10 +366,40 @@ public class GameManager {
             int secs = secondsLeft % 60;
             boolean redNl = redFlagTaken && (redFlagCarrier.getMcPlayer().getName().length() > 10);
             boolean blueNl = blueFlagTaken && (blueFlagCarrier.getMcPlayer().getName().length() > 10);
-            List<String> flagLines = List.of("§cFlag Status | " + (isRedFlagTaken() ? "Held by " + (redNl ? "" : getRedFlagCarrier().getMcPlayer().getName()) : "Home"),
-                    (redNl ? getRedFlagCarrier().getColorFormatting() + getRedFlagCarrier().getMcPlayer().getName() : ""),
-                    "§9Flag Status | " + (isBlueFlagTaken() ? "Held by " + (blueNl ? "" : getBlueFlagCarrier().getMcPlayer().getName()) : "Home"),
-                    (blueNl ? getBlueFlagCarrier().getColorFormatting() + getBlueFlagCarrier().getMcPlayer().getName() : ""));
+            List<String> flagLines = new ArrayList<>();
+            // this is hideous but it will do for now
+            if (redFlagTaken) {
+                if (redNl) {
+                    flagLines.add("§cFlag Status | Held By");
+                    flagLines.add(getRedFlagCarrier().getColorFormatting() + getRedFlagCarrier().getMcPlayer().getName());
+                }
+                else {
+                    flagLines.add("§cFlag Status | Held By " + getRedFlagCarrier().getMcPlayer().getName());
+                    flagLines.add("");
+                }
+            } else if (redFlagDropped) {
+                flagLines.add("§cFlag Status | Dropped (" + redDroppedLeft + ")");
+                flagLines.add("");
+            } else {
+                flagLines.add("§cFlag Status | Home");
+                flagLines.add("");
+            }
+            if (blueFlagTaken) {
+                if (blueNl) {
+                    flagLines.add("§9Flag Status | Held By");
+                    flagLines.add(getBlueFlagCarrier().getColorFormatting() + getBlueFlagCarrier().getMcPlayer().getName());
+                }
+                else {
+                    flagLines.add("§9Flag Status | Held By " + getBlueFlagCarrier().getMcPlayer().getName());
+                    flagLines.add("");
+                }
+            } else if (blueFlagDropped) {
+                flagLines.add("§9Flag Status | Dropped (" + blueDroppedLeft + ")");
+                flagLines.add("");
+            } else {
+                flagLines.add("§9Flag Status | Home");
+                flagLines.add("");
+            }
             players.forEach((p, c) -> {
                 // java wizardry but prevents having to run the above for every player
                 c.updateBoard(mins, secs, capturesToWin, redCaptures, blueCaptures, flagLines.toArray(String[]::new));
@@ -369,6 +408,23 @@ public class GameManager {
             if (secondsLeft <= 0) {
                 decideWinner();
             }
+            if (blueFlagDropped) {
+                if (blueDroppedLeft <= 0) {
+                    ctfMap.resetBlueDropPos();
+                    ctfMap.resetBlueFlag();
+                    ParallelCTF.sendMessage("§9Blue's Flag §ahas been reset!");
+                }
+                blueDroppedLeft--;
+            }
+            else blueDroppedLeft = 30;
+            if (redFlagDropped) {
+                if (redDroppedLeft <= 0) {
+                    ctfMap.resetRedDropPos();
+                    ctfMap.resetRedFlag();
+                    ParallelCTF.sendMessage("§cRed's Flag §ahas been reset!");
+                }
+                redDroppedLeft--;
+            } else redDroppedLeft = 30;
         }, 0L, 20L);
         // distance check loop
         // spawn camping and flag captures are ran here every 1/4 sec
@@ -436,6 +492,7 @@ public class GameManager {
                             if (oldData.getProfile().getName().equals(p.getName())) {
                                 CTFPlayer player = getPlayer(p);
                                 String nameStr = player.getColorFormatting() + p.getName();
+                                nameStr = nameStr.substring(0, Math.min(nameStr.length(), 15));
                                 WrappedChatComponent name = WrappedChatComponent.fromText(nameStr);
                                 PlayerInfoData newData = new PlayerInfoData(oldData.getProfile().withName(nameStr), oldData.getLatency(), oldData.getGameMode(), name);
                                 packet.getPlayerInfoDataLists().write(0, Collections.singletonList(newData));
@@ -528,6 +585,22 @@ public class GameManager {
 
     public void setBlueFlagTaken(boolean value) {
         this.blueFlagTaken = value;
+    }
+
+    public boolean isRedFlagDropped() {
+        return redFlagDropped;
+    }
+
+    public boolean isBlueFlagDropped() {
+        return blueFlagDropped;
+    }
+
+    public void setRedFlagDropped(boolean value) {
+        this.redFlagDropped = value;
+    }
+
+    public void setBlueFlagDropped(boolean value) {
+        this.blueFlagDropped = value;
     }
 
     public CTFPlayer getRedFlagCarrier() {

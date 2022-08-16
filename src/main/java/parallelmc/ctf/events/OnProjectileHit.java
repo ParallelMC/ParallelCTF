@@ -7,12 +7,14 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import parallelmc.ctf.ArrowShot;
 import parallelmc.ctf.CTFPlayer;
+import parallelmc.ctf.KillReason;
 import parallelmc.ctf.ParallelCTF;
 import parallelmc.ctf.classes.*;
 
@@ -20,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class OnProjectileHit implements Listener {
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onProjectileHit(ProjectileHitEvent event) {
         Entity hitEntity = event.getHitEntity();
         Block hitBlock = event.getHitBlock();
@@ -39,7 +41,7 @@ public class OnProjectileHit implements Listener {
                         // arrow 30+ blocks away is snipe
                         double dist = shot.shotLocation().distance(hitEntity.getLocation());
                         if (dist > 30D) {
-                            hpl.kill();
+                            hpl.kill(KillReason.PLAYER_KILL);
                             ParallelCTF.sendMessageTo(hitPlayer, "You were sniped by " + shot.shooter().getName() + " from " + Math.round(dist) + " blocks away!");
                             ParallelCTF.sendMessageTo(shot.shooter(), "You sniped " + hitPlayer.getName() + " from " + Math.round(dist) + " blocks away!");
                             ParallelCTF.sendMessage((hpl.getColorFormatting() + hitPlayer.getName() + " §awas sniped by " + pl.getColorFormatting() + shot.shooter().getName()));
@@ -56,7 +58,7 @@ public class OnProjectileHit implements Listener {
                 }
                 if (hitPlayer.getHealth() - arrow.getDamage() <= 0D) {
                     event.setCancelled(true);
-                    hpl.kill();
+                    hpl.kill(KillReason.PLAYER_KILL);
                     ParallelCTF.sendMessage(hpl.getColorFormatting() + hitPlayer.getName() + " §awas shot by " + pl.getColorFormatting() + pl.getMcPlayer().getName());
                 }
             }

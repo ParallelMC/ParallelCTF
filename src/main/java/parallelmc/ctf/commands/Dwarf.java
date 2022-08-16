@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import parallelmc.ctf.CTFPlayer;
 import parallelmc.ctf.GameState;
+import parallelmc.ctf.KillReason;
 import parallelmc.ctf.ParallelCTF;
 
 public class Dwarf implements CommandExecutor {
@@ -20,7 +21,7 @@ public class Dwarf implements CommandExecutor {
             CTFPlayer pl = ParallelCTF.gameManager.getPlayer(player);
             pl.setClass("Dwarf");
             if (ParallelCTF.gameManager.ctfMap.isPlayerNotInSpawn(pl)) {
-                pl.kill();
+                pl.kill(KillReason.CLASS_CHANGE);
             }
             ParallelCTF.sendMessageTo(player, "Equipped the Dwarf class!");
         }

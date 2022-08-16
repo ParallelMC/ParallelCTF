@@ -1,5 +1,5 @@
 name: "ParallelCTF"
-version: "1.5"
+version: "1.6"
 main: parallelmc.ctf.ParallelCTF
 api-version: 1.18
 author: EBro912

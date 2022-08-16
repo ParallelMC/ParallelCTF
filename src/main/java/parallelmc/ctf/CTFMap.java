@@ -4,10 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -25,6 +22,9 @@ public class CTFMap {
     private final BoundingBox redBB;
     private final BoundingBox blueBB;
     public final World world;
+    // used for keeping track of the blue dropped flag position
+    private ArmorStand blueFlagDroppedPos;
+    private ArmorStand redFlagDroppedPos;
 
 
     public CTFMap(World world, String name, Location redFlagPos, Location blueFlagPos, Location redSpawnPos, Location blueSpawnPos, Location redSpawnCorner1, Location redSpawnCorner2, Location blueSpawnCorner1, Location blueSpawnCorner2) {
@@ -46,7 +46,7 @@ public class CTFMap {
             if (e instanceof Player p) {
                 CTFPlayer cP = ParallelCTF.gameManager.getPlayer(p);
                 if (cP.getTeam() == CTFTeam.BLUE || cP == ParallelCTF.gameManager.getBlueFlagCarrier()) {
-                    cP.kill();
+                    cP.kill(KillReason.SPAWN_CAMP);
                     ParallelCTF.sendMessageTo(p, "Do not try to spawn camp!");
                 }
             }
@@ -59,7 +59,7 @@ public class CTFMap {
             if (e instanceof Player p) {
                 CTFPlayer cP = ParallelCTF.gameManager.getPlayer(p);
                 if (cP.getTeam() == CTFTeam.RED || cP == ParallelCTF.gameManager.getRedFlagCarrier()) {
-                    cP.kill();
+                    cP.kill(KillReason.SPAWN_CAMP);
                     ParallelCTF.sendMessageTo(p, "Do not try to spawn camp!");
                 }
             }
@@ -83,11 +83,52 @@ public class CTFMap {
         }
     }
 
+    public void dropBlueFlag(Location dropPos) {
+        ArmorStand armorStand = (ArmorStand)world.spawnEntity(dropPos, EntityType.ARMOR_STAND);
+        armorStand.setInvulnerable(true);
+        armorStand.setGlowing(true);
+        armorStand.setInvisible(true);
+        armorStand.setGravity(true);
+        armorStand.getEquipment().setHelmet(new ItemStack(Material.BLUE_BANNER));
+        armorStand.addEquipmentLock(EquipmentSlot.HEAD, ArmorStand.LockType.REMOVING_OR_CHANGING);
+        blueFlagDroppedPos = armorStand;
+        ParallelCTF.gameManager.setBlueFlagDropped(true);
+        ParallelCTF.gameManager.setBlueFlagTaken(false);
+        ParallelCTF.gameManager.setBlueFlagCarrier(null);
+        ParallelCTF.sendMessage("§9Blue's Flag §ahas been dropped!");
+    }
+
+    public void resetBlueDropPos() {
+        blueFlagDroppedPos.remove();
+        blueFlagDroppedPos = null;
+    }
+
+    public void resetRedDropPos() {
+        redFlagDroppedPos.remove();
+        redFlagDroppedPos = null;
+    }
+
+    public void dropRedFlag(Location dropPos) {
+        ArmorStand armorStand = (ArmorStand)world.spawnEntity(dropPos, EntityType.ARMOR_STAND);
+        armorStand.setInvulnerable(true);
+        armorStand.setGlowing(true);
+        armorStand.setInvisible(true);
+        armorStand.setGravity(true);
+        armorStand.getEquipment().setHelmet(new ItemStack(Material.RED_BANNER));
+        armorStand.addEquipmentLock(EquipmentSlot.HEAD, ArmorStand.LockType.REMOVING_OR_CHANGING);
+        redFlagDroppedPos = armorStand;
+        ParallelCTF.gameManager.setRedFlagDropped(true);
+        ParallelCTF.gameManager.setRedFlagTaken(false);
+        ParallelCTF.gameManager.setRedFlagCarrier(null);
+        ParallelCTF.sendMessage("§cRed's Flag §ahas been dropped!");
+    }
+
     /***
      * Resets the blue flag
      */
     public void resetBlueFlag() {
         world.getBlockAt(blueFlagPos).getRelative(BlockFace.UP).setType(Material.BLUE_BANNER);
+        ParallelCTF.gameManager.setBlueFlagDropped(false);
         ParallelCTF.gameManager.setBlueFlagTaken(false);
         ParallelCTF.gameManager.setBlueFlagCarrier(null);
     }
@@ -97,6 +138,7 @@ public class CTFMap {
      */
     public void resetRedFlag() {
         world.getBlockAt(redFlagPos).getRelative(BlockFace.UP).setType(Material.RED_BANNER);
+        ParallelCTF.gameManager.setRedFlagDropped(false);
         ParallelCTF.gameManager.setRedFlagTaken(false);
         ParallelCTF.gameManager.setRedFlagCarrier(null);
     }
@@ -106,41 +148,65 @@ public class CTFMap {
      */
     public void checkFlagTaken() {
         if (!ParallelCTF.gameManager.isBlueFlagTaken()) {
-            for (Entity e : world.getNearbyEntities(blueFlagPos, 1, 2, 1)) {
+            Location loc;
+            if (ParallelCTF.gameManager.isBlueFlagDropped()) loc = blueFlagDroppedPos.getLocation();
+            else loc = blueFlagPos;
+            for (Entity e : world.getNearbyEntities(loc, 1, 2, 1)) {
                 if (e instanceof Player p) {
                     CTFPlayer player = ParallelCTF.gameManager.getPlayer(p);
+                    if (player.getCtfClass() instanceof NinjaClass ninja && ninja.isInvisible())
+                        continue;
                     if (player.getTeam() == CTFTeam.RED) {
-                        if (player.getCtfClass() instanceof NinjaClass ninja && ninja.isInvisible())
-                            continue;
-                        world.getBlockAt(blueFlagPos).getRelative(BlockFace.UP).setType(Material.AIR);
-                        ItemStack banner = new ItemStack(Material.BLUE_BANNER);
-                        p.getInventory().setItem(EquipmentSlot.HEAD, banner);
+                        if (ParallelCTF.gameManager.isBlueFlagDropped()) {
+                            resetBlueDropPos();
+                            ParallelCTF.gameManager.setBlueFlagDropped(false);
+                        } else {
+                            world.getBlockAt(blueFlagPos).getRelative(BlockFace.UP).setType(Material.AIR);
+                        }
+                        p.getInventory().setItem(EquipmentSlot.HEAD, new ItemStack(Material.BLUE_BANNER));
                         p.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, true, false));
                         ParallelCTF.gameManager.setBlueFlagCarrier(player);
                         ParallelCTF.gameManager.setBlueFlagTaken(true);
-                        world.spawnEntity(blueFlagPos.clone().add(0, 50, 0), EntityType.LIGHTNING);
+                        world.spawnEntity(loc.clone().add(0, 50, 0), EntityType.LIGHTNING);
                         ParallelCTF.sendMessage("§c" + p.getName() + " §ahas taken §9Blue's Flag!");
                         break;
+                    }
+                    else if (ParallelCTF.gameManager.isBlueFlagDropped()) {
+                        resetBlueDropPos();
+                        resetBlueFlag();
+                        ParallelCTF.sendMessage("§9Blue's Flag §ahas been reset!");
                     }
                 }
             }
         }
         if (!ParallelCTF.gameManager.isRedFlagTaken()) {
-            for (Entity e : world.getNearbyEntities(redFlagPos, 1, 2, 1)) {
+            Location loc;
+            if (ParallelCTF.gameManager.isRedFlagDropped()) loc = redFlagDroppedPos.getLocation();
+            else loc = redFlagPos;
+            for (Entity e : world.getNearbyEntities(loc, 1, 2, 1)) {
                 if (e instanceof Player p) {
                     CTFPlayer player = ParallelCTF.gameManager.getPlayer(p);
+                    if (player.getCtfClass() instanceof NinjaClass ninja && ninja.isInvisible())
+                        continue;
                     if (player.getTeam() == CTFTeam.BLUE) {
-                        if (player.getCtfClass() instanceof NinjaClass ninja && ninja.isInvisible())
-                            continue;
-                        world.getBlockAt(redFlagPos).getRelative(BlockFace.UP).setType(Material.AIR);
-                        ItemStack banner = new ItemStack(Material.RED_BANNER);
-                        p.getInventory().setItem(EquipmentSlot.HEAD, banner);
+                        if (ParallelCTF.gameManager.isRedFlagDropped()) {
+                            resetRedDropPos();
+                            ParallelCTF.gameManager.setRedFlagDropped(false);
+                        } else {
+                            world.getBlockAt(redFlagPos).getRelative(BlockFace.UP).setType(Material.AIR);
+                        }
+                        p.getInventory().setItem(EquipmentSlot.HEAD, new ItemStack(Material.RED_BANNER));
                         p.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, true, false));
                         ParallelCTF.gameManager.setRedFlagCarrier(player);
                         ParallelCTF.gameManager.setRedFlagTaken(true);
-                        world.spawnEntity(redFlagPos.clone().add(0, 50, 0), EntityType.LIGHTNING);
+                        world.spawnEntity(loc.clone().add(0, 50, 0), EntityType.LIGHTNING);
                         ParallelCTF.sendMessage("§9" + p.getName() + " §ahas taken §cRed's Flag!");
                         break;
+                    }
+                    else if (ParallelCTF.gameManager.isRedFlagDropped()) {
+                        resetRedDropPos();
+                        resetRedFlag();
+                        ParallelCTF.sendMessage("§cRed's Flag §ahas been reset!");
                     }
                 }
             }

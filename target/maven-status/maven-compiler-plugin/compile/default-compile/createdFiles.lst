@@ -8,6 +8,7 @@ parallelmc\ctf\commands\Buffs.class
 parallelmc\ctf\events\OnChangeHeldItem.class
 parallelmc\ctf\commands\Medic.class
 parallelmc\ctf\classes\SoldierClass.class
+parallelmc\ctf\KillReason.class
 parallelmc\ctf\GameState.class
 parallelmc\ctf\events\OnPotionSplash.class
 parallelmc\ctf\classes\MedicClass.class

@@ -9,10 +9,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-import parallelmc.ctf.CTFPlayer;
-import parallelmc.ctf.CTFTeam;
-import parallelmc.ctf.GameState;
-import parallelmc.ctf.ParallelCTF;
+import parallelmc.ctf.*;
 import parallelmc.ctf.classes.AssassinClass;
 import parallelmc.ctf.classes.DwarfClass;
 import parallelmc.ctf.classes.MedicClass;
@@ -54,7 +51,7 @@ public class OnDamageEntity implements Listener {
                         if (victim.getFireTicks() > 0) {
                             ParallelCTF.sendMessage(plv.getColorFormatting() + victim.getName() + " §awas axed by " + pla.getColorFormatting() + attacker.getName());
                             event.setCancelled(true);
-                            plv.kill();
+                            plv.kill(KillReason.PLAYER_KILL);
                         }
                     }
                 }
@@ -70,7 +67,7 @@ public class OnDamageEntity implements Listener {
                         // assassins can be instakilled while assassinating
                         ParallelCTF.sendMessage(plv.getColorFormatting() + victim.getName() + " §awas assassinated by " + pla.getColorFormatting() + attacker.getName());
                         event.setCancelled(true);
-                        plv.kill();
+                        plv.kill(KillReason.PLAYER_KILL);
                     }
                 }
                 if (plv.getCtfClass() instanceof DwarfClass) {
@@ -80,10 +77,10 @@ public class OnDamageEntity implements Listener {
                         plv.getMcPlayer().setVelocity(new Vector(0, 0, 0));
                     });
                 }
-                if (victim.getHealth() - event.getDamage() <= 0D) {
+                if (victim.getHealth() - event.getFinalDamage() <= 0D) {
                     ParallelCTF.sendMessage(plv.getColorFormatting() + victim.getName() + " §awas slain by " + pla.getColorFormatting() + attacker.getName());
                     event.setCancelled(true);
-                    plv.kill();
+                    plv.kill(KillReason.PLAYER_KILL);
                 }
             }
         }

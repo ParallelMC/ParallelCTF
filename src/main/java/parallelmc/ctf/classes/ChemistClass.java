@@ -85,8 +85,8 @@ public class ChemistClass extends CTFClass {
         ItemStack jump = new ItemStack(Material.SPLASH_POTION, 3);
         pmeta = (PotionMeta)jump.getItemMeta();
         pmeta.setColor(PotionEffectType.JUMP.getColor());
-        pmeta.addCustomEffect(new PotionEffect(PotionEffectType.JUMP, 80, 1), true);
-        pmeta.displayName(Component.text("§fJump Boost II"));
+        pmeta.addCustomEffect(new PotionEffect(PotionEffectType.JUMP, 100, 2), true);
+        pmeta.displayName(Component.text("§fJump Boost III"));
         jump.setItemMeta(pmeta);
 
         this.hotbar = new ItemStack[] {

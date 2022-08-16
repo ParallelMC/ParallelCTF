@@ -6,7 +6,7 @@
 
     <groupId>parallelmc.ctf</groupId>
     <artifactId>ParallelCTF</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.6-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

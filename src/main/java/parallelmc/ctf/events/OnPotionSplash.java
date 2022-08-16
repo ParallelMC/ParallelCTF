@@ -10,6 +10,7 @@ import org.bukkit.potion.PotionEffectType;
 import parallelmc.ctf.CTFPlayer;
 import parallelmc.ctf.ParallelCTF;
 import parallelmc.ctf.classes.ChemistClass;
+import parallelmc.ctf.classes.DwarfClass;
 
 import java.util.Collection;
 
@@ -25,7 +26,11 @@ public class OnPotionSplash implements Listener {
                     if (e instanceof Player p) {
                         CTFPlayer c = ParallelCTF.gameManager.getPlayer(p);
                         if (harmful && c.getTeam() == cl.getTeam() || !harmful && c.getTeam() != cl.getTeam())
-                            event.setIntensity(e, 0D);
+                            event.setIntensity(p, 0D);
+                        // lvl 10 dwarves are immune to negative effects
+                        if (harmful && c.getCtfClass() instanceof DwarfClass dwarf && dwarf.getLevel() == 10) {
+                            event.setIntensity(p, 0D);
+                        }
                     }
                 }
             }

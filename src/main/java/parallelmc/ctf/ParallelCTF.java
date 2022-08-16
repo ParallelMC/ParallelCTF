@@ -61,6 +61,7 @@ public class ParallelCTF extends JavaPlugin {
         manager.registerEvents(new OnChangeHeldItem(), this);
         manager.registerEvents(new OnInventoryClick(), this);
         manager.registerEvents(new OnChat(), this);
+        manager.registerEvents(new OnPotionSplash(), this);
         this.getCommand("startgame").setExecutor(new StartGame());
         this.getCommand("endgame").setExecutor(new EndGame());
         this.getCommand("loadmap").setExecutor(new LoadMap());
