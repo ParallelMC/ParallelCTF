@@ -359,7 +359,7 @@ public class GameManager {
                     ParallelCTF.sendMessageTo(p, "You were damaged by §9Blue's Flag!");
                 }
             }
-        }, 0L, 300L);
+        }, 0L, 400L);
         // time loop
         this.plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             int mins = secondsLeft / 60;
