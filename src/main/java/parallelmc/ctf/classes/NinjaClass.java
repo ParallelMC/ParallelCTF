@@ -38,7 +38,7 @@ public class NinjaClass extends CTFClass {
         ItemStack sword = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = sword.getItemMeta();
         meta.setUnbreakable(true);
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 5, true);
+        meta.addEnchant(Enchantment.SHARPNESS, 5, true);
         meta.displayName(Component.text("§fNinja Sword"));
         ArrayList<Component> lore = new ArrayList<>();
         lore.add(Component.text("Sneak to slowly regain health!", NamedTextColor.GRAY));

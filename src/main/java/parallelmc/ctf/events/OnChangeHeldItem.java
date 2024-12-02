@@ -27,7 +27,7 @@ public class OnChangeHeldItem implements Listener {
                         held.removeEnchantment(e);
                     });
                     Map<Enchantment, Integer> enchantments = Map.ofEntries(
-                            Map.entry(Enchantment.DAMAGE_ALL, level),
+                            Map.entry(Enchantment.SHARPNESS, level),
                             Map.entry(Enchantment.KNOCKBACK, (int) Math.floor(level / 3f)),
                             Map.entry(Enchantment.FIRE_ASPECT, (int) Math.floor(level / 5f))
                     );

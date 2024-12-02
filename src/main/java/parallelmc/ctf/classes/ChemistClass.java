@@ -19,9 +19,9 @@ public class ChemistClass extends CTFClass {
         super(player);
         this.name = "Chemist";
         ItemStack chestplate = new ItemStack(Material.GOLDEN_CHESTPLATE);
-        chestplate.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 2);
+        chestplate.addEnchantment(Enchantment.PROTECTION, 2);
         ItemStack leggings = new ItemStack(Material.GOLDEN_LEGGINGS);
-        leggings.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 2);
+        leggings.addEnchantment(Enchantment.PROTECTION, 2);
         this.armor = new ItemStack[] {
                 new ItemStack(Material.LEATHER_BOOTS),
                 leggings,
@@ -41,8 +41,8 @@ public class ChemistClass extends CTFClass {
 
         ItemStack damage = new ItemStack(Material.SPLASH_POTION, 12);
         PotionMeta pmeta = (PotionMeta)damage.getItemMeta();
-        pmeta.setColor(PotionEffectType.HARM.getColor());
-        pmeta.addCustomEffect(new PotionEffect(PotionEffectType.HARM, 1, 1), true);
+        pmeta.setColor(PotionEffectType.INSTANT_DAMAGE.getColor());
+        pmeta.addCustomEffect(new PotionEffect(PotionEffectType.INSTANT_DAMAGE, 1, 1), true);
         pmeta.displayName(Component.text("§fInstant Damage II"));
         damage.setItemMeta(pmeta);
 
@@ -55,8 +55,8 @@ public class ChemistClass extends CTFClass {
 
         ItemStack health = new ItemStack(Material.SPLASH_POTION, 5);
         pmeta = (PotionMeta)health.getItemMeta();
-        pmeta.setColor(PotionEffectType.HEAL.getColor());
-        pmeta.addCustomEffect(new PotionEffect(PotionEffectType.HEAL, 1, 2), true);
+        pmeta.setColor(PotionEffectType.INSTANT_HEALTH.getColor());
+        pmeta.addCustomEffect(new PotionEffect(PotionEffectType.INSTANT_HEALTH, 1, 2), true);
         pmeta.displayName(Component.text("§fInstant Health III"));
         health.setItemMeta(pmeta);
 
@@ -69,8 +69,8 @@ public class ChemistClass extends CTFClass {
 
         ItemStack str = new ItemStack(Material.SPLASH_POTION, 3);
         pmeta = (PotionMeta)str.getItemMeta();
-        pmeta.setColor(PotionEffectType.INCREASE_DAMAGE.getColor());
-        pmeta.addCustomEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 3600, 0), true);
+        pmeta.setColor(PotionEffectType.STRENGTH.getColor());
+        pmeta.addCustomEffect(new PotionEffect(PotionEffectType.STRENGTH, 3600, 0), true);
         pmeta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 3600, 0), true);
         pmeta.displayName(Component.text("§fStrength + Speed"));
         str.setItemMeta(pmeta);
@@ -84,8 +84,8 @@ public class ChemistClass extends CTFClass {
 
         ItemStack jump = new ItemStack(Material.SPLASH_POTION, 3);
         pmeta = (PotionMeta)jump.getItemMeta();
-        pmeta.setColor(PotionEffectType.JUMP.getColor());
-        pmeta.addCustomEffect(new PotionEffect(PotionEffectType.JUMP, 100, 2), true);
+        pmeta.setColor(PotionEffectType.JUMP_BOOST.getColor());
+        pmeta.addCustomEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, 100, 2), true);
         pmeta.displayName(Component.text("§fJump Boost III"));
         jump.setItemMeta(pmeta);
 

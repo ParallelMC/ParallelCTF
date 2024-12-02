@@ -21,7 +21,7 @@ public class OnPotionSplash implements Listener {
             CTFPlayer cl = ParallelCTF.gameManager.getPlayer(player);
             Collection<PotionEffect> effects = event.getPotion().getEffects();
             if (cl.getCtfClass() instanceof ChemistClass) {
-                boolean harmful = effects.stream().anyMatch(x -> x.getType() == PotionEffectType.HARM) || effects.stream().anyMatch(x -> x.getType() == PotionEffectType.POISON);
+                boolean harmful = effects.stream().anyMatch(x -> x.getType() == PotionEffectType.INSTANT_DAMAGE) || effects.stream().anyMatch(x -> x.getType() == PotionEffectType.POISON);
                 for (LivingEntity e : event.getAffectedEntities()) {
                     if (e instanceof Player p) {
                         CTFPlayer c = ParallelCTF.gameManager.getPlayer(p);

@@ -69,10 +69,10 @@ public class OnProjectileHit implements Listener {
                     return;
                 }
                 hitPlayer.getWorld().playSound(hitEntity.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1f, 1f);
-                hitPlayer.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, hitPlayer.getLocation(), 1);
+                hitPlayer.getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, hitPlayer.getLocation(), 1);
                 ArrayList<PotionEffect> effects = new ArrayList<>();
                 effects.add(new PotionEffect(PotionEffectType.BLINDNESS, 60, 0, true));
-                effects.add(new PotionEffect(PotionEffectType.SLOW, 60, 0, true));
+                effects.add(new PotionEffect(PotionEffectType.SLOWNESS, 60, 0, true));
                 hitPlayer.addPotionEffects(effects);
             }
             else if (projectile instanceof EnderPearl) {
@@ -90,7 +90,7 @@ public class OnProjectileHit implements Listener {
                     CTFPlayer pl = ParallelCTF.gameManager.getPlayer(shot.shooter());
                     if (pl.getCtfClass() instanceof PyroClass) {
                         hitBlock.getWorld().playSound(hitBlock.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1f, 1f);
-                        hitBlock.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, hitBlock.getLocation(), 1);
+                        hitBlock.getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, hitBlock.getLocation(), 1);
                         Collection<Entity> nearby = hitBlock.getWorld().getNearbyEntities(hitBlock.getLocation(), 3, 3, 3);
                         for (Entity e : nearby) {
                             if (e instanceof Player explosionHit) {
@@ -126,7 +126,7 @@ public class OnProjectileHit implements Listener {
             else if (projectile instanceof Egg) {
                 // still play if it hits a block just for the effect
                 hitBlock.getWorld().playSound(hitBlock.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1f, 1f);
-                hitBlock.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, hitBlock.getLocation(), 5);
+                hitBlock.getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, hitBlock.getLocation(), 5);
             }
             else if (projectile instanceof EnderPearl) {
                 // cast-o-rama

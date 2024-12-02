@@ -39,7 +39,7 @@ public class MedicClass extends CTFClass {
         ItemStack sword = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta meta = sword.getItemMeta();
         meta.setUnbreakable(true);
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, false);
+        meta.addEnchant(Enchantment.SHARPNESS, 1, false);
         meta.displayName(Component.text("§fMedic Sword"));
         lore.clear();
         lore.add(Component.text("Hit allies to heal them!", NamedTextColor.GRAY));

@@ -57,9 +57,9 @@ public class OnDamageEntity implements Listener {
                 }
                 if (pla.getCtfClass() instanceof AssassinClass assassin) {
                     if (assassin.isAssassinating()) {
-                        attacker.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
+                        attacker.removePotionEffect(PotionEffectType.STRENGTH);
                         ParallelCTF.sendMessageTo(attacker, "Assassination kill! Strength II for 9 seconds.");
-                        attacker.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 180, 1, true));
+                        attacker.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 180, 1, true));
                     }
                 }
                 if (plv.getCtfClass() instanceof AssassinClass assassin) {

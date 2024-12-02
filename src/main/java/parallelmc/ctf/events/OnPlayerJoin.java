@@ -18,7 +18,7 @@ public class OnPlayerJoin implements Listener {
         p.getActivePotionEffects().clear();
         p.setHealth(20D);
         p.showBossBar(ParallelCTF.alphaBossBar);
-        AttributeInstance instance = p.getAttribute(Attribute.GENERIC_ATTACK_SPEED);
+        AttributeInstance instance = p.getAttribute(Attribute.ATTACK_SPEED);
         if (instance != null) {
             instance.setBaseValue(15.9);
         }

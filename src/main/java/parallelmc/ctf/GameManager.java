@@ -474,12 +474,7 @@ public class GameManager {
         for (Player pl : plugin.getServer().getOnlinePlayers()) {
             if (pl.equals(p)) continue;
             pl.hidePlayer(plugin, p);
-            try {
-                ParallelCTF.getProtocolManager().sendServerPacket(pl, packet);
-            }
-            catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            ParallelCTF.getProtocolManager().sendServerPacket(pl, packet);
         }
         if (!hasNameHandler.contains(p.getUniqueId())) {
             ParallelCTF.getProtocolManager().addPacketListener(new PacketAdapter(plugin, ListenerPriority.NORMAL, PacketType.Play.Server.PLAYER_INFO) {

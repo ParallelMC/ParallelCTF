@@ -46,7 +46,7 @@ public class DwarfClass extends CTFClass {
                 food
         };
         this.effects = new PotionEffect[] {
-                new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0, true)
+                new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, 0, true)
         };
         initRunnable();
         this.runnableTicks = 10L;
@@ -84,7 +84,7 @@ public class DwarfClass extends CTFClass {
                             sword.removeEnchantment(e);
                         });
                         Map<Enchantment, Integer> enchantments = Map.ofEntries(
-                                Map.entry(Enchantment.DAMAGE_ALL, level),
+                                Map.entry(Enchantment.SHARPNESS, level),
                                 Map.entry(Enchantment.KNOCKBACK, (int) Math.floor(level / 3f)),
                                 Map.entry(Enchantment.FIRE_ASPECT, (int) Math.floor(level / 5f))
                         );

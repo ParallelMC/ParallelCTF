@@ -58,7 +58,7 @@ public class OnRightClick implements Listener {
                }, 300L);
             }
             else if (heldItem.getType() == Material.REDSTONE) {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 40, 127, true));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 40, 127, true));
                 heldItem.subtract();
                 ParallelCTF.sendMessageTo(player, "Assassinate active!");
                 assassin.assassinate();

@@ -167,7 +167,7 @@ public class CTFMap {
                         p.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, true, false));
                         ParallelCTF.gameManager.setBlueFlagCarrier(player);
                         ParallelCTF.gameManager.setBlueFlagTaken(true);
-                        world.spawnEntity(loc.clone().add(0, 50, 0), EntityType.LIGHTNING);
+                        world.spawnEntity(loc.clone().add(0, 50, 0), EntityType.LIGHTNING_BOLT);
                         ParallelCTF.sendMessage("§c" + p.getName() + " §ahas taken §9Blue's Flag!");
                         break;
                     }
@@ -199,7 +199,7 @@ public class CTFMap {
                         p.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, true, false));
                         ParallelCTF.gameManager.setRedFlagCarrier(player);
                         ParallelCTF.gameManager.setRedFlagTaken(true);
-                        world.spawnEntity(loc.clone().add(0, 50, 0), EntityType.LIGHTNING);
+                        world.spawnEntity(loc.clone().add(0, 50, 0), EntityType.LIGHTNING_BOLT);
                         ParallelCTF.sendMessage("§9" + p.getName() + " §ahas taken §cRed's Flag!");
                         break;
                     }
@@ -223,7 +223,7 @@ public class CTFMap {
             if (player.getLocation().distanceSquared(blueFlagPos) < 2) {
                 player.getInventory().setItem(EquipmentSlot.HEAD, ParallelCTF.gameManager.getRedFlagCarrier().getCtfClass().armor[3]);
                 player.removePotionEffect(PotionEffectType.GLOWING);
-                world.spawnEntity(blueFlagPos.clone().add(0, 50, 0), EntityType.LIGHTNING);
+                world.spawnEntity(blueFlagPos.clone().add(0, 50, 0), EntityType.LIGHTNING_BOLT);
                 ParallelCTF.sendMessage("§9" + player.getName() + " §ahas captured §cRed's Flag!");
                 resetRedFlag();
                 ParallelCTF.gameManager.addBlueCapture();
@@ -234,7 +234,7 @@ public class CTFMap {
             if (player.getLocation().distanceSquared(redFlagPos) < 2) {
                 player.getInventory().setItem(EquipmentSlot.HEAD, ParallelCTF.gameManager.getBlueFlagCarrier().getCtfClass().armor[3]);
                 player.removePotionEffect(PotionEffectType.GLOWING);
-                world.spawnEntity(redFlagPos.clone().add(0, 50, 0), EntityType.LIGHTNING);
+                world.spawnEntity(redFlagPos.clone().add(0, 50, 0), EntityType.LIGHTNING_BOLT);
                 ParallelCTF.sendMessage("§c" + player.getName() + " §ahas captured §9Blue's Flag!");
                 resetBlueFlag();
                 ParallelCTF.gameManager.addRedCapture();
