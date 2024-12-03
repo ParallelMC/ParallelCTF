@@ -28,6 +28,9 @@ commands:
   votemap:
     description: Vote for a map
     usage: /votemap
+  maps:
+    description: See a list of loaded maps
+    usage: /maps
   team:
     description: Change your team
     usage: /team <red/blue/spectator>

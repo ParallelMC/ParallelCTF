@@ -52,7 +52,7 @@ public class GameManager {
     private final int capturesToWin;
     private final String defaultMap;
     public GameState gameState;
-    private final HashMap<String, CTFMap> maps = new HashMap<>();
+    public final HashMap<String, CTFMap> maps = new HashMap<>();
     public CTFMap ctfMap;
     public HashMap<UUID, CTFPlayer> players = new HashMap<>();
     public HashSet<UUID> hasNameHandler = new HashSet<>();

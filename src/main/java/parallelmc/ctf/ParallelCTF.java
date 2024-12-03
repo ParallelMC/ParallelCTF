@@ -5,6 +5,7 @@ import com.comphenix.protocol.ProtocolManager;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -67,6 +68,7 @@ public class ParallelCTF extends JavaPlugin {
         this.getCommand("loadmap").setExecutor(new LoadMap());
         this.getCommand("votestart").setExecutor(new VoteStart());
         this.getCommand("votemap").setExecutor(new VoteMap());
+        this.getCommand("maps").setExecutor(new Maps());
         this.getCommand("shuffleteams").setExecutor(new ShuffleTeams());
         this.getCommand("debug").setExecutor(new Debug());
         this.getCommand("info").setExecutor(new ClassInfo());
@@ -141,6 +143,12 @@ public class ParallelCTF extends JavaPlugin {
         for (Player p : Bukkit.getOnlinePlayers()) {
             sendMessageTo(p, message);
         }
+    }
+
+    public static void sendConsoleMessage(String message) {
+        Component msg = MiniMessage.miniMessage()
+                .deserialize("<dark_aqua>[<white><bold>CTF</bold><dark_aqua>] <green>" + message);
+        Bukkit.getConsoleSender().sendMessage(msg);
     }
 
     public static ProtocolManager getProtocolManager() {
