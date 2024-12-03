@@ -21,9 +21,13 @@ public class ForceTeam implements CommandExecutor {
             }
             if ("red".equalsIgnoreCase(args[1])) {
                 ParallelCTF.gameManager.changeTeam(p, CTFTeam.RED);
+                ParallelCTF.sendMessageTo(p, "You have been switched to the §cred §ateam!");
+                ParallelCTF.sendMessageTo(player, args[0] + " has been switched to the §cred §ateam!");
             }
             else if ("blue".equalsIgnoreCase(args[1])) {
                 ParallelCTF.gameManager.changeTeam(p, CTFTeam.BLUE);
+                ParallelCTF.sendMessageTo(p, "You have been switched to the §bblue §ateam!");
+                ParallelCTF.sendMessageTo(player, args[0] + " has been switched to the §bblue §ateam!");
             }
             else {
                 ParallelCTF.sendMessageTo(player, "Unknown team " + args[0]);
